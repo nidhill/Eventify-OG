@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ticket | Eventify</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/ticket.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="ticket-page-main">
+        <div class="ticket-container">
+            <h1>Booking Confirmed!</h1>
+            <p class="success-message">Thank you for your booking. Here is your ticket.</p>
+
+            <div class="ticket">
+                <div class="ticket-main">
+                    <div class="ticket-header">
+                        <% if (event && event.image) { %>
+                            <img src="<%= event.image %>" alt="<%= event.title %>" class="event-image-header" onerror="this.src='https://via.placeholder.com/400x200/6366f1/ffffff?text=Event+Image'">
+                        <% } else { %>
+                            <img src="https://via.placeholder.com/400x200/6366f1/ffffff?text=Event+Image" alt="Event Image" class="event-image-header">
+                        <% } %>
+                    </div>
+                    <div class="ticket-body">
+                        <span class="category"><%= event ? event.category : 'Event' %></span>
+                        <h2><%= event ? event.title : 'Event' %></h2>
+                        <div class="ticket-info">
+                            <div class="info-item">
+                                <strong>Date & Time</strong>
+                                <p><%= event && event.date ? new Date(event.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'TBD' %></p>
+                            </div>
+                            <div class="info-item">
+                                <strong>Venue</strong>
+                                <p><%= event ? event.location : 'TBD' %></p>
+                            </div>
+                            <div class="info-item">
+                                <strong>Tickets</strong>
+                                <p><%= booking ? booking.quantity : 1 %></p>
+                            </div>
+                        </div>
+                        <div class="booked-by">
+                            <strong>Booked by:</strong> <%= booking ? booking.customerName : 'User' %>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticket-stub">
+                    <h3><%= event ? event.title : 'Event' %></h3>
+                    <div class="qr-code">
+                        <img src="https://i.postimg.cc/d1DeT4g1/qr-code.png" alt="QR Code">
+                    </div>
+                    <p><strong>Booking ID:</strong></p>
+                    <p class="booking-id"><%= booking ? booking._id : 'N/A' %></p>
+                    <p class="brand">eventify.com</p>
+                </div>
+            </div>
+
+            <a href="/userauth/home" class="btn btn-primary back-home-btn">Back to Home</a>
+        </div>
+    </main>
+
+</body>
+</html>

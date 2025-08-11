@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eventify Signup</title>
+  <link rel="stylesheet" href="/globals.css">
+  <link rel="stylesheet" href="/signup.css">
+</head>
+<body>
+  <%- include('partials/loader') %>
+  <div class="container">
+    <div class="left-panel">
+      <img src="https://i.gifer.com/embedded/download/OZpL.gif" alt="Event Crowd" class="bg-image" />
+      <h1 class="eventify-title">EVENTIFY</h1>
+    </div>
+
+    <div class="right-panel">
+      <div class="form-wrapper">
+        <h1 class="form-title">CREATE ACCOUNT</h1>
+        <p class="form-subtext">Join the community!</p>
+
+        <form action="/userauth/signup" method="POST">
+          <input type="text" name="username" placeholder="Full Name" required />
+          <input type="email" name="email" placeholder="Email" required />
+          <input type="password" name="password" placeholder="Password" required />
+          
+          <select name="usertype" required>
+            <option value="" disabled selected>I am signing up to...</option>
+            <option value="attendee">Book tickets for events</option>
+            <option value="creator">Create and manage events</option>
+          </select>
+          
+          <button type="submit">Signup</button>
+        </form>
+
+        <p class="or">Or continue with</p>
+
+        <div class="google-auth">
+          <a href="/userauth/auth/google" class="google-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/800px-Google_%22G%22_logo.svg.png" alt="Google Logo" class="google-logo" />
+            <span>Signup with Google</span>
+          </a>
+        </div>
+
+        <div class="login-link">
+          <p>Already have an account? <a href="/userauth/showlogin">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

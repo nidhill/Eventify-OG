@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventify.com</title>
+    <link rel="stylesheet" href="/globals.css" />
+    <link rel="stylesheet" href="/home.css" />
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main>
+        <!-- ======================= HERO SECTION ======================= -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <p class="hero-subtitle">Book your</p>
+                <h1 class="hero-title">Tickets for Event!</h1>
+                <p class="hero-tagline">All the fun starts here. Safe. Secure, Reliable ticketing. Your ticket to live entertainment!</p>
+                <a href="#events" class="btn btn-primary">View More</a>
+            </div>
+            <div class="hero-image-gallery">
+                <img src="https://i.postimg.cc/nzBpN95Z/79a300208390621-66ed92c08ac20.jpg" alt="Event concert photo 1">
+                <img src="https://i.postimg.cc/dQLXxgL6/5f5e93208390621-66ed92cb302e4.jpg" alt="Event concert photo 2">
+                <img src="https://i.postimg.cc/vT2Xh8d9/2433c2208390621-66ed92ca2fa4b.jpg" alt="Event concert photo 3">
+            </div>
+        </section>
+
+        <!-- ======================= FEATURED EVENTS ======================= -->
+        <section id="events" class="featured-events">
+            <div class="section-header">
+                <h2>Featured Events</h2>
+                <p>Be sure not to miss these Events today</p>
+            </div>
+            <div class="event-grid">
+                <% if (events && events.length > 0) { %>
+                    <% events.slice(0, 3).forEach(event => { %>
+                        <article class="event-card">
+                            <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
+                            <div class="event-details">
+                                <h3 class="card-title"><%= event.title %></h3>
+                                <p class="card-location"><%= event.date %></p>
+                                <p class="card-price"><%= event.price %></p>
+                                <a href="/events/<%= event._id %>" class="btn btn-secondary">Get Tickets</a>
+                            </div>
+                        </article>
+                    <% }) %>
+                <% } else { %>
+                    <p>No featured events available at the moment.</p>
+                <% } %>
+            </div>
+        </section>
+
+        <!-- ======================= TRENDING CATEGORIES ======================= -->
+        <section class="trending-categories">
+            <div class="section-header">
+                <h2>Trending categories</h2>
+                <p>Be sure not to miss these Events today.</p>
+            </div>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Rap</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ======================= TRUSTED BY ======================= -->
+        <section class="trusted-by">
+             <div class="section-header">
+                <h2>Trusted by over 150 organizations</h2>
+                <p>in more than 50 countries</p>
+            </div>
+            <div class="logos-container">
+                <div class="logo-item">LOREAL</div>
+                <div class="logo-item">NEW BALANCE</div>
+                <div class="logo-item">ZARA</div>
+                <div class="logo-item">H&M</div>
+            </div>
+        </section>
+
+        <!-- ======================= JOIN US (CTA) ======================= -->
+        <section class="join-us-cta">
+            <div class="cta-images">
+                <img src="https://i.postimg.cc/Mpv0M7f5/8c631a208433315-Y3-Jvc-Cwy-NDgw-LDE5-Mzks-MCw3-ODU.jpg" alt="User avatar 1">
+                <img src="https://i.postimg.cc/KcpwdNbr/13e763227665327-Y3-Jvc-Cwx-Njky-LDEz-Mj-Ms-MCw0-Mj-M.png" alt="User avatar 2">
+                <img src="https://i.postimg.cc/FFCV9C7z/3270b0196581869-66221b7a93c84.jpg" alt="User avatar 3">
+            </div>
+            <div class="cta-content">
+                 <h3>Join our Events and Participate in the<br>next Lorem contest.</h3>
+                 <a href="#" class="btn btn-primary">Join Us</a>
+            </div>
+            <div class="cta-images">
+                <img src="https://i.postimg.cc/xYGKtC58/2f631d208390621-66ed92c8dc31e.jpg" alt="User avatar 4">
+                <img src="https://i.postimg.cc/m25cz0sz/bd79ed193543345-65edd7cd016b5.png" alt="User avatar 5">
+                <img src="https://i.postimg.cc/GmVFk4kC/f1c1af206997015-Y3-Jvc-Cwx-NDAw-LDEw-OTUs-MCwx-NTI.jpg" alt="User avatar 6">
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

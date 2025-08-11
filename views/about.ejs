@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Eventify</title>
+    <link rel="stylesheet" href="/globals.css">
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/about.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="about-page-main">
+
+        <!-- ======================= HERO SECTION ======================= -->
+        <section class="about-hero">
+            <div class="hero-content">
+                <h1>Connecting People, Creating Memories.</h1>
+                <p class="subtitle">
+                    Eventify is born from a passion for live events. We are on a mission to make discovering and attending events in Kerala a seamless and trustworthy experience for everyone.
+                </p>
+            </div>
+        </section>
+
+        <!-- ======================= OUR MISSION SECTION ======================= -->
+        <section class="our-mission">
+            <div class="mission-grid">
+                <div class="mission-item">
+                    <div class="icon">🎟️</div>
+                    <h3>Simplicity</h3>
+                    <p>Find and book tickets in just a few clicks. No hassle, no long queues.</p>
+                </div>
+                <div class="mission-item">
+                    <div class="icon">🛡️</div>
+                    <h3>Trust & Security</h3>
+                    <p>Every transaction is 100% secure with transparent pricing and authentic tickets.</p>
+                </div>
+                <div class="mission-item">
+                    <div class="icon">🌟</div>
+                    <h3>Discovery</h3>
+                    <p>Explore the best and most diverse events across Kerala, all in one place.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= OUR STORY SECTION ======================= -->
+        <section class="our-story">
+            <div class="story-image">
+                <img src="https://i.postimg.cc/L5yYqgqf/team-discussion.jpg" alt="The Eventify Team Story">
+            </div>
+            <div class="story-text">
+                <h2>How It All Began</h2>
+                <p>
+                    The idea for Eventify sparked from a simple conversation between friends tired of the challenges in booking event tickets. We faced everything from confusing websites to the fear of scams. We knew there had to be a better way.
+                </p>
+                <p>
+                    Driven by this shared frustration, we launched Eventify to build the platform we always wished for—a place where anyone could buy tickets with confidence. Our dream is simple: to be the most trusted bridge between artists and their fans.
+                </p>
+            </div>
+        </section>
+        
+        <!-- ======================= FINAL CTA SECTION ======================= -->
+        <section class="final-cta">
+            <h2>Ready to Make Some Memories?</h2>
+            <p>Your next great experience is just a click away.</p>
+            <a href="/events" class="btn btn-primary">Explore Events</a>
+        </section>
+
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>

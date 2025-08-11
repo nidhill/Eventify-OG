@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eventify Login</title>
+  <link rel="stylesheet" href="/globals.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #1e1e1e;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .left-panel {
+      width: 50%;
+      position: relative;
+    }
+
+    .bg-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .eventify-title {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .right-panel {
+      width: 50%;
+      background: linear-gradient(to bottom right, #0d012a, #1a075b);
+      color: white;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center; /* Center the form box */
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 320px; /* Reduced form width */
+    }
+
+    .login-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .login-subtext {
+      color: #cccccc;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      background-color: #3b2060;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+    }
+
+    form input::placeholder {
+      color: #aaa;
+    }
+
+    form button {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(to right, #5a22c8, #6785ea);
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .or {
+      text-align: center;
+      margin: 16px 0 10px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .google-auth {
+      display: flex;
+      justify-content: center;
+    }
+
+    .google-btn {
+      width: 100%;
+      max-width: 100%;
+      padding: 10px 16px;
+      background-color: #5f0bcd;
+      color: white;
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .google-btn:hover {
+      background-color: #4a0aa7;
+    }
+
+    .google-logo {
+      width: 16px;
+      height: 16px;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    .signup-link a {
+      color: #a0c0ff;
+      text-decoration: none;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/loader') %>
+  <div class="container">
+    <!-- Left Section -->
+    <div class="left-panel">
+      <img src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg" alt="Event Image" class="bg-image" />
+      <h1 class="eventify-title">EVENTIFY</h1>
+    </div>
+
+    <!-- Right Section -->
+    <div class="right-panel">
+      <div class="form-box">
+        <h1 class="login-title">LOGIN</h1>
+        <p class="login-subtext">Log in with email address</p>
+
+        <form action="/userauth/login" method="POST">
+          <input type="email" name="email" placeholder="Yourname@gmail.com" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+
+        <p class="or">Or continue with</p>
+        <div class="google-auth">
+          <a href="/userauth/auth/google" class="google-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="Google Logo" class="google-logo" />
+            <span>Continue with Google</span>
+          </a>
+        </div>
+
+        <div class="signup-link">
+          <p>Don't have an account? <a href="/userauth/showsignup">Sign up</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

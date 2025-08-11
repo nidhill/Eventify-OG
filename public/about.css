@@ -1,0 +1,145 @@
+/* ======================================= */
+/* ABOUT US PAGE STYLES (Professional)   */
+/* ======================================= */
+
+.about-page-main {
+    color: var(--text-primary-color);
+}
+
+/* --- Hero Section --- */
+.about-hero {
+    position: relative;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 5%;
+    background-image: url('https://i.postimg.cc/8zW3b6fP/group-of-friends.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.about-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(5, 2, 46, 0.7); /* Dark overlay */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.hero-content .subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary-color);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* --- Mission Section --- */
+.our-mission {
+    padding: 5rem 5%;
+    background-color: var(--card-bg-color);
+}
+
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.mission-item {
+    text-align: center;
+    padding: 2rem;
+    background-color: #1a144a;
+    border-radius: 12px;
+}
+
+.mission-item .icon {
+    font-size: 3rem;
+    color: var(--primary-accent-color);
+    margin-bottom: 1rem;
+}
+
+.mission-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.mission-item p {
+    color: var(--text-secondary-color);
+}
+
+/* --- Story Section --- */
+.our-story {
+    padding: 5rem 5%;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 3rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.story-image img {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.story-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.story-text p {
+    color: var(--text-secondary-color);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+/* --- Final CTA Section --- */
+.final-cta {
+    padding: 5rem 5%;
+    text-align: center;
+    background-color: var(--card-bg-color);
+}
+
+.final-cta h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.final-cta p {
+    margin-bottom: 2rem;
+    color: var(--text-secondary-color);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .mission-grid {
+        grid-template-columns: 1fr;
+    }
+    .our-story {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+}

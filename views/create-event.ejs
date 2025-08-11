@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Event | Eventify</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/booking.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    
+    <main class="booking-page-main">
+        <div class="booking-container">
+            <h1>Create a New Event</h1>
+            
+            <% if (locals.error) { %>
+                <div class="error-message" style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form class="booking-form" action="/events" method="POST">
+                <div class="form-group">
+                    <label for="title">Event Title *</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Event Date *</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="time">Event Time *</label>
+                    <input type="time" id="time" name="time" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" id="location" name="location" placeholder="Enter event location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">Event Image URL *</label>
+                    <input type="url" id="image" name="image" placeholder="https://example.com/event-image.jpg" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Ticket Price (₹) *</label>
+                    <input type="number" id="price" name="price" min="0" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Music">Music</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Rap">Rap</option>
+                        <option value="Dance">Dance</option>
+                        <option value="Theatre">Theatre</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isPrivate" name="isPrivate">
+                        <span>Private Event (Only invited guests can attend)</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Create Event</button>
+            </form>
+        </div>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script>
+        // Form validation and debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.booking-form');
+            const submitBtn = document.querySelector('.btn-primary');
+            
+            // Log form data on submit
+            form.addEventListener('submit', function(e) {
+                const formData = new FormData(form);
+                console.log('Form submitted with data:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+                
+                // Validate required fields
+                const requiredFields = ['title', 'description', 'date', 'time', 'location', 'image', 'price', 'category'];
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    const input = form.querySelector(`[name="${field}"]`);
+                    if (!input.value.trim()) {
+                        console.error(`Missing required field: ${field}`);
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields.');
+                    return false;
+                }
+                
+                // Validate date and time
+                const date = formData.get('date');
+                const time = formData.get('time');
+                if (date && time) {
+                    const dateTime = new Date(`${date}T${time}`);
+                    if (isNaN(dateTime.getTime())) {
+                        e.preventDefault();
+                        alert('Invalid date or time format.');
+                        return false;
+                    }
+                    
+                    // Check if date is in the future
+                    if (dateTime <= new Date()) {
+                        e.preventDefault();
+                        alert('Event date must be in the future.');
+                        return false;
+                    }
+                }
+                
+                console.log('Form validation passed, submitting...');
+            });
+            
+            // Set minimum date to today
+            const dateInput = document.getElementById('date');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+            
+            // Set default time to current time + 1 hour
+            const timeInput = document.getElementById('time');
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            const timeString = now.toTimeString().slice(0, 5);
+            timeInput.value = timeString;
+        });
+    </script>
+</body>
+</html>
+    

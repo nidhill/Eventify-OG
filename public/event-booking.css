@@ -1,0 +1,131 @@
+/* ======================================= */
+/* EVENT BOOKING (COMBINED) PAGE STYLES  */
+/* ======================================= */
+.event-booking-main {
+    padding: 3rem 5%;
+}
+
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2.5rem;
+}
+
+/* Left Column */
+.event-details-column .event-banner-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+}
+.content-wrapper {
+    padding-right: 1rem;
+}
+.event-category {
+    display: inline-block;
+    background-color: var(--primary-accent-color);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+.content-wrapper h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    line-height: 1.2;
+}
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 2rem;
+}
+.info-item strong {
+    display: block;
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.info-item p {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.content-wrapper h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+.description {
+    color: var(--text-secondary-color);
+    line-height: 1.8;
+}
+
+/* Right Column */
+.booking-form-column .booking-box {
+    background-color: var(--card-bg-color);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid #333;
+    position: sticky;
+    top: 2rem;
+}
+.booking-box h3 {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.price-display {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+.price-display strong {
+    color: var(--primary-accent-color);
+    font-size: 1.5rem;
+}
+.booking-form .form-group {
+    margin-bottom: 1rem;
+}
+.booking-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+.booking-form input {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #2c2c41;
+    color: var(--text-primary-color);
+}
+.price-details {
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+}
+.btn-confirm-booking {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .page-container {
+        grid-template-columns: 1fr;
+    }
+    .booking-form-column .booking-box {
+        position: static; /* Remove sticky positioning on smaller screens */
+    }
+}

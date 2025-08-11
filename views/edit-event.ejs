@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Event | Eventify</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/create-event.css">
+    <style>
+        .page-header h1 {
+            color: #333;
+        }
+        
+        .form-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #f5c6cb;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('partials/header') %>
+
+    <main class="create-event-main">
+        <div class="container">
+            <section class="page-header">
+                <h1>Edit Event</h1>
+                <p>Update your event details</p>
+            </section>
+
+            <% if (error) { %>
+                <div class="error-message">
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <form class="event-form" action="/events/<%= event._id %>?_method=PUT" method="POST">
+                <div class="form-section">
+                    <h2>Basic Information</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">Event Title *</label>
+                            <input type="text" id="title" name="title" value="<%= event.title %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="category">Category *</label>
+                            <select id="category" name="category" required>
+                                <option value="Music" <%= event.category === 'Music' ? 'selected' : '' %>>Music</option>
+                                <option value="Comedy" <%= event.category === 'Comedy' ? 'selected' : '' %>>Comedy</option>
+                                <option value="Workshop" <%= event.category === 'Workshop' ? 'selected' : '' %>>Workshop</option>
+                                <option value="Rap" <%= event.category === 'Rap' ? 'selected' : '' %>>Rap</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Event Description *</label>
+                        <textarea id="description" name="description" required><%= event.description %></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Date & Time</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Event Date *</label>
+                            <input type="date" id="date" name="date" value="<%= eventDate %>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Event Time *</label>
+                            <input type="time" id="time" name="time" value="<%= eventTime %>" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Location & Pricing</h2>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">Location *</label>
+                            <select id="location" name="location" required>
+                                <option value="Calicut" <%= event.location === 'Calicut' ? 'selected' : '' %>>Calicut</option>
+                                <option value="Kochi" <%= event.location === 'Kochi' ? 'selected' : '' %>>Kochi</option>
+                                <option value="Trivandrum" <%= event.location === 'Trivandrum' ? 'selected' : '' %>>Trivandrum</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="price">Ticket Price (₹) *</label>
+                            <input type="number" id="price" name="price" value="<%= event.price %>" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Event Media</h2>
+                    
+                    <div class="form-group">
+                        <label for="image">Event Image URL *</label>
+                        <input type="url" id="image" name="image" value="<%= event.image %>" placeholder="https://example.com/image.jpg" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Additional Settings</h2>
+                    
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="isPrivate" name="isPrivate" <%= event.isPrivate ? 'checked' : '' %>>
+                            <label for="isPrivate">Make this a private event</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <a href="/events/my-events" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment | Eventify</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/payment.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="payment-page-main">
+        <!-- Payment Timeout Warning -->
+        <div id="timeout-warning" style="display: none; position: fixed; top: 20px; right: 20px; background: #ff6b6b; color: white; padding: 1rem; border-radius: 8px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+            <strong>Payment Session Expiring!</strong>
+            <div id="timeout-countdown">5:00</div>
+            <button onclick="extendSession()" style="background: white; color: #ff6b6b; border: none; padding: 0.5rem 1rem; border-radius: 4px; margin-top: 0.5rem; cursor: pointer;">Extend Session</button>
+        </div>
+
+        <div class="payment-container">
+            <div class="payment-options">
+                <h2>Payment Options</h2>
+                <div class="options-list">
+                    <div class="option active">Debit/Credit Card</div>
+                    <div class="option">Pay by UPI App</div>
+                    <div class="option">Net Banking</div>
+                </div>
+                <div class="payment-form">
+                    <h4>Enter Your Card Details</h4>
+                    <p>(This is a demo and does not process real payments)</p>
+                    <form action="/booking/confirm" method="POST">
+                        <% if (booking && booking._id) { %>
+                            <input type="hidden" name="bookingId" value="<%= booking._id %>">
+                        <% } else { %>
+                            <input type="hidden" name="bookingId" value="">
+                            <script>
+                                console.error('Booking ID not found in payment form');
+                            </script>
+                        <% } %>
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" disabled>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="expiry">Expiry</label>
+                                <input type="text" id="expiry" placeholder="MM/YY" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="XXX" disabled>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-make-payment">
+                            <% if (booking && booking.totalAmount === 0) { %>
+                                Confirm Free Booking
+                            <% } else { %>
+                                Make Payment
+                            <% } %>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h3>ORDER SUMMARY</h3>
+                <% if (event && booking) { %>
+                    <div class="summary-item event-title">
+                        <h4><%= event.title || 'Event' %></h4>
+                        <span><%= booking.quantity || 1 %> Ticket(s)</span>
+                    </div>
+                    <div class="summary-item">
+                        <p><%= event.date ? new Date(event.date).toLocaleDateString() : 'Date TBD' %></p>
+                    </div>
+                    <hr>
+                    <div class="summary-item">
+                        <span>Sub Total</span>
+                        <span>₹<%= event.price && booking.quantity ? (event.price * booking.quantity).toFixed(2) : '0.00' %></span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Convenience Fees</span>
+                        <span>₹<%= event.price && booking.quantity && booking.totalAmount ? ((booking.totalAmount - (event.price * booking.quantity)) || 0).toFixed(2) : '0.00' %></span>
+                    </div>
+                    <% if (booking.couponApplied) { %>
+                        <div class="summary-item coupon-success">
+                            <span>Discount (EVENTFREE)</span>
+                            <span>-₹<%= event.price && booking.quantity ? (event.price * booking.quantity + ((booking.totalAmount - (event.price * booking.quantity)) || 0)).toFixed(2) : '0.00' %></span>
+                        </div>
+                    <% } %>
+                    <hr>
+                    <div class="summary-item total">
+                        <strong>Amount Payable</strong>
+                        <strong>₹<%= booking.totalAmount ? booking.totalAmount.toFixed(2) : '0.00' %></strong>
+                    </div>
+                <% } else { %>
+                    <div class="summary-item">
+                        <p>Booking information not available</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Payment page timeout functionality
+        let timeLeft = 300; // 5 minutes in seconds
+        let timeoutInterval;
+        let warningShown = false;
+
+        function startTimeout() {
+            timeoutInterval = setInterval(() => {
+                timeLeft--;
+                
+                if (timeLeft <= 60 && !warningShown) {
+                    // Show warning when 1 minute is left
+                    document.getElementById('timeout-warning').style.display = 'block';
+                    warningShown = true;
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timeoutInterval);
+                    // Redirect to home page
+                    window.location.href = '/userauth/home';
+                    return;
+                }
+                
+                // Update countdown display
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                const countdownElement = document.getElementById('timeout-countdown');
+                if (countdownElement) {
+                    countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }, 1000);
+        }
+
+        function extendSession() {
+            // Reset timer to 5 minutes
+            timeLeft = 300;
+            warningShown = false;
+            document.getElementById('timeout-warning').style.display = 'none';
+            
+            // Clear existing interval and restart
+            clearInterval(timeoutInterval);
+            startTimeout();
+        }
+
+        // Start the timeout when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startTimeout();
+        });
+
+        // Reset timer on user interaction
+        document.addEventListener('click', function() {
+            if (warningShown) {
+                timeLeft = 300; // Reset to 5 minutes
+                warningShown = false;
+                document.getElementById('timeout-warning').style.display = 'none';
+            }
+        });
+
+        // Reset timer on form submission
+        document.querySelector('form').addEventListener('submit', function() {
+            clearInterval(timeoutInterval);
+        });
+    </script>
+
+</body>
+</html>

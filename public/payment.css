@@ -1,0 +1,124 @@
+/* ======================================= */
+/* PAYMENT PAGE STYLES (Dark Theme)      */
+/* ======================================= */
+.payment-page-main {
+    padding: 4rem 5%;
+    color: var(--text-primary-color);
+    background-color: var(--bg-color); /* Dark background */
+    min-height: calc(100vh - 80px); /* Adjust 80px based on your header height */
+}
+
+.payment-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+/* Left Side */
+.payment-options {
+    background-color: var(--card-bg-color);
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+.payment-options h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+.options-list {
+    margin-bottom: 2rem;
+}
+.option {
+    padding: 1rem;
+    border-bottom: 1px solid #444;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.option.active {
+    background-color: #2c2c41;
+    font-weight: bold;
+}
+.option:hover {
+    background-color: #2c2c41;
+}
+.payment-form {
+    padding-top: 1rem;
+}
+.payment-form h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+.payment-form p {
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
+    margin-bottom: 1.5rem;
+}
+.form-group {
+    margin-bottom: 1rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background-color: #3b2060;
+    color: white;
+}
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+.btn-make-payment {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+/* Right Side */
+.order-summary {
+    background-color: var(--card-bg-color);
+    padding: 2rem;
+    border-radius: 8px;
+    height: fit-content;
+    border: 1px solid #333;
+}
+.order-summary h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    color: var(--text-secondary-color);
+}
+.event-title h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary-color);
+}
+.summary-item.total {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    color: var(--text-primary-color);
+}
+hr {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 1.5rem 0;
+}
+.coupon-success {
+    color: #4CAF50;
+    font-weight: bold;
+}

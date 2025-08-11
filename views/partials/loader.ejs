@@ -1,0 +1,14 @@
+<div id="loader-wrapper">
+    <div class="loader"></div>
+</div>
+
+<script>
+    // This script hides the loader once the page and all its content are fully loaded.
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('loader-wrapper');
+        if (loader) {
+            // Add a class to fade out the loader smoothly
+            loader.classList.add('hidden');
+        }
+    });
+</script>

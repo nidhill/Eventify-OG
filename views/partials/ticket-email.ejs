@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Ticket for <%= event.title %></title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f7f6;">
+
+    <div style="max-width: 600px; margin: auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #12003f; color: white; padding: 20px; text-align: center;">
+            <h1 style="margin: 0;">EVENTIFY</h1>
+        </div>
+        
+        <div style="padding: 30px;">
+            <h2 style="color: #333;">Booking Confirmed!</h2>
+            <p style="color: #555;">Hello <%= booking.customerName %>,</p>
+            <p style="color: #555;">Thank you for your booking. Here are your ticket details for <strong><%= event.title %></strong>.</p>
+
+            <div style="border-top: 1px solid #eee; margin: 20px 0; padding-top: 20px;">
+                <h3 style="margin-bottom: 15px;">Booking Summary</h3>
+                <p style="margin: 5px 0;"><strong>Event:</strong> <%= event.title %></p>
+                <p style="margin: 5px 0;"><strong>Date:</strong> <%= new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                <p style="margin: 5px 0;"><strong>Location:</strong> <%= event.location %></p>
+                <p style="margin: 5px 0;"><strong>Number of Tickets:</strong> <%= booking.quantity %></p>
+                <p style="margin: 5px 0;"><strong>Total Amount Paid:</strong> ₹<%= booking.totalAmount.toFixed(2) %></p>
+                <p style="margin: 5px 0;"><strong>Booking ID:</strong> <%= booking._id %></p>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <p style="color: #555;">Show this QR code at the venue</p>
+                <img src="https://i.postimg.cc/d1DeT4g1/qr-code.png" alt="QR Code" style="width: 150px; height: 150px;">
+            </div>
+        </div>
+
+        <div style="background-color: #f4f7f6; color: #888; text-align: center; padding: 15px; font-size: 12px;">
+            <p>© 2025 Eventify. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>

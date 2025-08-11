@@ -1,0 +1,132 @@
+/* ======================================= */
+/* TICKET PAGE STYLES                    */
+/* ======================================= */
+.ticket-page-main {
+    padding: 3rem 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ticket-container {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.ticket-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary-color);
+}
+
+.success-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary-color);
+    margin-bottom: 2.5rem;
+}
+
+.ticket {
+    display: flex;
+    background-color: #fff;
+    color: #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    height: 300px; /* Fixed height for ticket */
+}
+
+.ticket-main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ticket-header {
+    height: 40%; /* 40% of ticket height */
+}
+.event-image-header {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+}
+
+.ticket-body {
+    padding: 1rem 1.5rem;
+    text-align: left;
+}
+.ticket-body .category {
+    background-color: #e0eaff;
+    color: #4a6ee2;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    display: inline-block;
+}
+.ticket-body h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0.5rem 0;
+}
+.ticket-info {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0;
+    font-size: 0.8rem;
+}
+.info-item strong {
+    color: #888;
+}
+.booked-by {
+    font-size: 0.8rem;
+    margin-top: auto;
+}
+
+
+.ticket-stub {
+    flex-basis: 200px;
+    border-left: 2px dashed #ccc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    text-align: center;
+}
+.ticket-stub h3 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+.qr-code img {
+    width: 100px;
+    height: 100px;
+}
+.booking-id {
+    font-size: 0.7rem;
+    word-break: break-all;
+}
+.brand {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.back-home-btn {
+    margin-top: 2rem;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .ticket {
+        flex-direction: column;
+        height: auto;
+    }
+    .ticket-stub {
+        border-left: none;
+        border-top: 2px dashed #ccc;
+        flex-basis: auto;
+    }
+    .event-image-header {
+        border-top-right-radius: 12px;
+    }
+}
