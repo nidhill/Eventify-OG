@@ -4,6 +4,7 @@ import connectTodbs from './db.js'
 import authRouter from './routes/authRoute.js'
 import eventRouter from './routes/eventRoute.js'
 import bookingRouter from './routes/bookingRoute.js';
+import adminRouter from './routes/adminRoute.js'; 
 import session from 'express-session'
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -50,9 +51,16 @@ app.use(passport.session());
 app.use('/userauth', authRouter);
 app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
+app.use('/admin', adminRouter); 
+
+
 
 // Google OAuth routes (root level) - only if credentials are available
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  console.log('Google OAuth credentials found, setting up routes...');
+  console.log('Client ID:', process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing');
+  console.log('Client Secret:', process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing');
+  
   app.get('/auth/google', 
     passport.authenticate('google', { scope: ['profile', 'email'] })
   );
@@ -60,9 +68,24 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   app.get('/auth/google/callback', 
     passport.authenticate('google', { 
       successRedirect: '/userauth/home',
-      failureRedirect: '/userauth/showlogin' 
+      failureRedirect: '/userauth/auth/google/failure',
+      failureFlash: true
     })
   );
+  
+  // Test route to check OAuth status
+  app.get('/auth/google/status', (req, res) => {
+    res.json({
+      status: 'Google OAuth is configured',
+      clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
+      callbackUrl: "http://localhost:5000/auth/google/callback"
+    });
+  });
+} else {
+  console.log('Google OAuth credentials missing!');
+  console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing');
+  console.log('GOOGLE_CLIENT_SECRET:', process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing');
 }
 
 // Root route
@@ -70,15 +93,55 @@ app.get('/', (req, res) => {
   res.redirect('/userauth/showlogin');
 });
 
+// Test route to verify server is working
+app.get('/test', (req, res) => {
+  res.json({ 
+    status: 'Server is running', 
+    timestamp: new Date().toISOString(),
+    env: {
+      nodeEnv: process.env.NODE_ENV,
+      port: process.env.PORT || 5000
+    }
+  });
+});
+
 // About page route
 app.get('/about', (req, res) => {
-    res.render('about'); 
+    // Ensure user is always defined, even if null
+    const user = req.user || null;
+    res.render('about', { user: user }); 
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(500).send('Something went wrong!');
+  console.error('Error details:', {
+    message: err.message,
+    stack: err.stack,
+    name: err.name,
+    code: err.code,
+    url: req.url,
+    method: req.method
+  });
+  
+  // Check if it's a Google OAuth error
+  if (err.name === 'TokenError' || err.code === 'invalid_grant') {
+    console.log('Google OAuth error detected, redirecting to login...');
+    return res.redirect('/userauth/showlogin?error=oauth_failed');
+  }
+  
+  // Check if it's a validation error
+  if (err.name === 'ValidationError') {
+    console.log('Validation error detected');
+    return res.status(400).send(`Validation Error: ${err.message}`);
+  }
+  
+  // Check if it's a MongoDB error
+  if (err.name === 'MongoError' || err.name === 'MongoServerError') {
+    console.log('MongoDB error detected');
+    return res.status(500).send('Database error occurred. Please try again.');
+  }
+  
+  res.status(500).send('Something went wrong! Please try again.');
 });
 
 // Start server

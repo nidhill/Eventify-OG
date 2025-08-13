@@ -3,7 +3,7 @@ import Event from '../models/eventModel.js';
 import Otp from '../models/otpModel.js';
 import { sendWelcomeEmail, sendOtpEmail } from '../../utils/sendEmail.js';
 import crypto from 'crypto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Signup function
 export const signup = async (req, res) => {
@@ -130,6 +130,11 @@ export const login = async (req, res) => {
       return res.render('login', { error: 'Invalid email or password' });
     }
     
+    // Check if the user is banned
+    if (user.isBanned) {
+        return res.render('login', { error: 'Your account has been suspended. Please contact support.' });
+    }
+    
     if (!user.isVerified) {
         return res.render('login', { error: 'Please verify your email before logging in. Check your email for the OTP.' });
     }
@@ -159,12 +164,81 @@ export const showlogin = async (req,res)=>{
 export const home = async (req,res)=>{
   try {
     const allEvents = await Event.find({});
+    
+    // Get current date for comparison
+    const currentDate = new Date();
+    
+    // Separate events into upcoming and previous
+    const upcomingEvents = allEvents.filter(event => {
+      if (!event.date) return false;
+      const eventDate = new Date(event.date);
+      return eventDate >= currentDate;
+    });
+    
+    const previousEvents = allEvents.filter(event => {
+      if (!event.date) return false;
+      const eventDate = new Date(event.date);
+      return eventDate < currentDate;
+    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by most recent first
+    
+    // Check if user is a new Google OAuth user who needs to choose user type
+    // For Google OAuth users, show the selection if they haven't explicitly chosen their type
+    const needsUserTypeSelection = req.user && 
+                                 req.user.googleId && 
+                                 !req.user.hasChosenUserType; // Show for Google users who haven't chosen yet
+    
+    console.log('User type selection check:', {
+      userId: req.user?._id,
+      username: req.user?.username,
+      googleId: req.user?.googleId,
+      usertype: req.user?.usertype,
+      needsUserTypeSelection: needsUserTypeSelection
+    });
+    
     res.render('home', { 
         user: req.user, 
-        events: allEvents 
+        events: upcomingEvents,
+        previousEvents: previousEvents,
+        needsUserTypeSelection: needsUserTypeSelection
     });
   } catch (error) {
     console.error('Home page error:', error);
     res.redirect('/userauth/showlogin');
+  }
+}
+
+// New function to handle user type selection
+export const updateUserType = async (req, res) => {
+  try {
+    const { usertype } = req.body;
+    
+    if (!usertype || !['attendee', 'creator'].includes(usertype)) {
+      return res.status(400).json({ success: false, message: 'Invalid user type' });
+    }
+    
+    // Update user's usertype and mark that they've chosen
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id, 
+      { 
+        usertype: usertype,
+        hasChosenUserType: true // Mark that user has made their choice
+      }, 
+      { new: true }
+    );
+    
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Update the session user
+    req.user.usertype = usertype;
+    req.user.hasChosenUserType = true;
+    
+    console.log('User type updated successfully:', updatedUser.username, 'usertype:', usertype);
+    
+    res.json({ success: true, message: 'User type updated successfully' });
+  } catch (error) {
+    console.error('Error updating user type:', error);
+    res.status(500).json({ success: false, message: 'Failed to update user type' });
   }
 }

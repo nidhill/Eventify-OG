@@ -7,6 +7,7 @@ const eventSchema = new mongoose.Schema({
   location: { type: String, required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
+  freeEntry: { type: Boolean, default: false },
   category: { type: String, required: true },
   isPrivate: {
     type: Boolean,

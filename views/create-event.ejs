@@ -21,62 +21,67 @@
             <% } %>
             
             <form class="booking-form" action="/events" method="POST">
-                <div class="form-group">
-                    <label for="title">Event Title *</label>
-                    <input type="text" id="title" name="title" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="title">Event Title *</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="Music">Music</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Workshop">Workshop</option>
+                            <option value="Rap">Rap</option>
+                            <option value="Dance">Dance</option>
+                            <option value="Theatre">Theatre</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="description">Description *</label>
-                    <textarea id="description" name="description" rows="4" required></textarea>
+                    <textarea id="description" name="description" rows="3" placeholder="Enter a detailed description of your event..." required></textarea>
                 </div>
                 
-                <div class="form-group">
-                    <label for="date">Event Date *</label>
-                    <input type="date" id="date" name="date" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date">Event Date *</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">Event Time *</label>
+                        <input type="time" id="time" name="time" required>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="time">Event Time *</label>
-                    <input type="time" id="time" name="time" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="location">Location *</label>
-                    <input type="text" id="location" name="location" placeholder="Enter event location" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" placeholder="Enter event location" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price">Ticket Price (₹) *</label>
+                        <div class="price-input-group">
+                            <div class="free-entry-checkbox">
+                                <input type="checkbox" id="freeEntry" name="freeEntry">
+                                <label for="freeEntry" class="checkbox-label">Free Entry</label>
+                            </div>
+                            <input type="number" id="price" name="price" min="0" step="0.01" value="0" required>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label for="image">Event Image URL *</label>
                     <input type="url" id="image" name="image" placeholder="https://example.com/event-image.jpg" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="price">Ticket Price (₹) *</label>
-                    <input type="number" id="price" name="price" min="0" step="0.01" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="category">Category *</label>
-                    <select id="category" name="category" required>
-                        <option value="">Select a category</option>
-                        <option value="Music">Music</option>
-                        <option value="Comedy">Comedy</option>
-                        <option value="Workshop">Workshop</option>
-                        <option value="Rap">Rap</option>
-                        <option value="Dance">Dance</option>
-                        <option value="Theatre">Theatre</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Technology">Technology</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="isPrivate" name="isPrivate">
-                        <span>Private Event (Only invited guests can attend)</span>
-                    </label>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">Create Event</button>
@@ -91,6 +96,23 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('.booking-form');
             const submitBtn = document.querySelector('.btn-primary');
+            const freeEntryCheckbox = document.getElementById('freeEntry');
+            const priceInput = document.getElementById('price');
+            
+            // Handle free entry checkbox
+            freeEntryCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    priceInput.value = '0';
+                    priceInput.disabled = true;
+                    priceInput.style.opacity = '0.5';
+                    priceInput.style.cursor = 'not-allowed';
+                } else {
+                    priceInput.disabled = false;
+                    priceInput.style.opacity = '1';
+                    priceInput.style.cursor = 'text';
+                    priceInput.value = '';
+                }
+            });
             
             // Log form data on submit
             form.addEventListener('submit', function(e) {
@@ -101,7 +123,7 @@
                 }
                 
                 // Validate required fields
-                const requiredFields = ['title', 'description', 'date', 'time', 'location', 'image', 'price', 'category'];
+                const requiredFields = ['title', 'description', 'date', 'time', 'location', 'image', 'category'];
                 let isValid = true;
                 
                 requiredFields.forEach(field => {
@@ -111,6 +133,12 @@
                         isValid = false;
                     }
                 });
+                
+                // Special validation for price
+                if (!freeEntryCheckbox.checked && (!priceInput.value || parseFloat(priceInput.value) < 0)) {
+                    console.error('Price must be 0 or greater when not free entry');
+                    isValid = false;
+                }
                 
                 if (!isValid) {
                     e.preventDefault();

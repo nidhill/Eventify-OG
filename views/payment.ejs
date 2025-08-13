@@ -77,8 +77,15 @@
                     <hr>
                     <div class="summary-item">
                         <span>Sub Total</span>
-                        <span>₹<%= event.price && booking.quantity ? (event.price * booking.quantity).toFixed(2) : '0.00' %></span>
+                        <span>
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free Entry</span>
+                            <% } else { %>
+                                ₹<%= event.price && booking.quantity ? (event.price * booking.quantity).toFixed(2) : '0.00' %>
+                            <% } %>
+                        </span>
                     </div>
+                    <% if (event.price > 0) { %>
                     <div class="summary-item">
                         <span>Convenience Fees</span>
                         <span>₹<%= event.price && booking.quantity && booking.totalAmount ? ((booking.totalAmount - (event.price * booking.quantity)) || 0).toFixed(2) : '0.00' %></span>
@@ -89,10 +96,17 @@
                             <span>-₹<%= event.price && booking.quantity ? (event.price * booking.quantity + ((booking.totalAmount - (event.price * booking.quantity)) || 0)).toFixed(2) : '0.00' %></span>
                         </div>
                     <% } %>
+                    <% } %>
                     <hr>
                     <div class="summary-item total">
                         <strong>Amount Payable</strong>
-                        <strong>₹<%= booking.totalAmount ? booking.totalAmount.toFixed(2) : '0.00' %></strong>
+                        <strong>
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free</span>
+                            <% } else { %>
+                                ₹<%= booking.totalAmount ? booking.totalAmount.toFixed(2) : '0.00' %>
+                            <% } %>
+                        </strong>
                     </div>
                 <% } else { %>
                     <div class="summary-item">

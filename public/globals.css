@@ -58,3 +58,32 @@ button:focus-visible {
 a {
   text-decoration: none;
 }
+
+/* Ban Warning Styles */
+.ban-warning {
+  background-color: #dc3545;
+  color: white;
+  padding: 12px 0;
+  text-align: center;
+  position: relative;
+  z-index: 1000;
+}
+
+.ban-warning-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.ban-icon {
+  font-size: 18px;
+}
+
+.ban-text {
+  font-weight: 500;
+  font-size: 14px;
+}

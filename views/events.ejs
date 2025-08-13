@@ -6,39 +6,33 @@
     <title>All Events | Eventify</title>
     <link rel="stylesheet" href="/home.css">
     <link rel="stylesheet" href="/events.css">
+    <link rel="stylesheet" href="/components.css">
 </head>
 <body>
+   
 
     <%- include('partials/header') %>
 
-    <main class="events-page-main">
+    <main id="main-content" class="events-page-main">
         <div class="container">
             <section class="page-header">
-                <h1>Explore All Events</h1>
-                <p>Find concerts, workshops, comedy shows, and more happening near you.</p>
-                <% if (user && user.usertype === 'creator') { %>
-                    <div style="margin-top: 1rem;">
-                        <a href="/events/my-events" class="btn btn-primary" style="margin-right: 1rem;">My Events</a>
-                        <a href="/events/create" class="btn btn-secondary">Create New Event</a>
-                    </div>
-                <% } %>
+                <h1><%= query.filter === 'previous' ? 'Previous Events' : 'Explore All Events' %></h1>
+                <p><%= query.filter === 'previous' ? 'Relive the memories from our past events' : 'Find concerts, workshops, comedy shows, and more happening near you.' %></p>
             </section>
 
             <section class="filter-controls">
-                <!-- ഫോമിൽ action, method എന്നിവ ചേർത്തു -->
                 <form class="filter-form" action="/events" method="GET">
-                    <input type="search" name="search" placeholder="Search by event or artist..." value="<%= query.search || '' %>">
+                    <input type="search" name="search" placeholder="Search by event or artist..." value="<%= query.search || '' %>" aria-label="Search events">
                     
-                    <select name="category">
+                    <select name="category" aria-label="Filter by category">
                         <option value="">All Categories</option>
-                        <!-- തിരഞ്ഞെടുത്ത ഓപ്ഷൻ നിലനിർത്തുന്നു -->
                         <option value="Music" <%= (query.category === 'Music') ? 'selected' : '' %>>Music</option>
                         <option value="Comedy" <%= (query.category === 'Comedy') ? 'selected' : '' %>>Comedy</option>
                         <option value="Workshop" <%= (query.category === 'Workshop') ? 'selected' : '' %>>Workshop</option>
                         <option value="Rap" <%= (query.category === 'Rap') ? 'selected' : '' %>>Rap</option>
                     </select>
                     
-                    <select name="location">
+                    <select name="location" aria-label="Filter by location">
                         <option value="">All Locations</option>
                         <option value="Calicut" <%= (query.location === 'Calicut') ? 'selected' : '' %>>Calicut</option>
                         <option value="Kochi" <%= (query.location === 'Kochi') ? 'selected' : '' %>>Kochi</option>
@@ -53,12 +47,36 @@
                 <div class="event-grid">
                     <% if (events && events.length > 0) { %>
                         <% events.forEach(event => { %>
-                            <article class="event-card">
-                                <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
+                            <article class="event-card <%= query.filter === 'previous' ? 'previous-event-card' : '' %>">
+                                <div class="event-image-container">
+                                    <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
+                                    <% if (query.filter === 'previous') { %>
+                                        <div class="event-overlay">
+                                            <span class="event-status">Past Event</span>
+                                        </div>
+                                    <% } %>
+                                </div>
                                 <div class="event-details">
                                     <h3 class="card-title"><%= event.title %></h3>
-                                    <p class="card-location"><%= event.date %></p>
-                                    <p class="card-price">₹<%= event.price %></p>
+                                    <p class="card-location">
+                                        <% if (event.date && event.date instanceof Date && !isNaN(event.date.getTime())) { %>
+                                            <%= event.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                                        <% } else { %>
+                                            Date TBA
+                                        <% } %>
+                                    </p>
+                                    <p class="card-price">
+                                        <% if (event.price == 0) { %>
+                                            <span class="free-entry-text">Free Entry</span>
+                                        <% } else { %>
+                                            ₹<%= event.price %>
+                                        <% } %>
+                                    </p>
+                                    <p class="event-category"><%= event.category %></p>
+                                    <div class="event-description" style="background-color: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; position: relative;">
+                                        <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, #4A90E2, #7bb3f0); border-radius: 2px 0 0 2px;"></div>
+                                        <p style="color: #a9b6c0; font-size: 0.85rem; line-height: 1.4; margin: 0; font-style: italic;"><%= event.description ? (event.description.length > 100 ? event.description.substring(0, 100) + '...' : event.description) : 'No description available' %></p>
+                                    </div>
                                     <a href="/events/<%= event._id %>" class="btn btn-secondary">View details</a>
                                 </div>
                             </article>

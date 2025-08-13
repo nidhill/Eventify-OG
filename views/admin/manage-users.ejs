@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="/home.css">
+    <style>
+        .manage-container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: var(--card-bg-color); }
+        .btn-ban { background-color: #dc3545; color: white; }
+        .btn-unban { background-color: #28a745; color: white; }
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="manage-container">
+        <h1>Manage Users</h1>
+        
+        <% if (locals.successMessage) { %>
+            <div class="alert alert-success">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 18px;">✅</span>
+                    <div>
+                        <%= locals.successMessage %>
+                        <br>
+                        <small style="opacity: 0.8;">Email notifications have been sent to the user.</small>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>User Type</th>
+                    <th>Status</th>
+                    <th>Ban Reason</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(function(u) { %>
+                    <tr>
+                        <td><%= u.username %></td>
+                        <td><%= u.email %></td>
+                        <td><%= u.usertype %></td>
+                        <td><%= u.isBanned ? 'Banned' : 'Active' %></td>
+                        <td><%= u.isBanned && u.banReason ? u.banReason : '-' %></td>
+                        <td><%= u.updatedAt ? new Date(u.updatedAt).toLocaleDateString() : '-' %></td>
+                        <td>
+                            <% if (u.isBanned) { %>
+                                <form action="/admin/users/unban/<%= u._id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-unban" title="📧 Unban notification email will be sent automatically">Unban</button>
+                                </form>
+                            <% } else { %>
+                                <button type="button" class="btn btn-ban" onclick="showBanModal('<%= u._id %>', '<%= u.username %>')" title="📧 Ban notification email will be sent automatically">Ban</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+
+    <!-- Ban User Modal -->
+    <div id="banModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ban User</h2>
+                <span class="close" onclick="closeBanModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="banForm" method="POST">
+                    <p>Are you sure you want to ban <strong id="banUsername"></strong>?</p>
+                    <div class="form-group">
+                        <label for="banReason">Reason for ban:</label>
+                        <textarea id="banReason" name="reason" rows="3" placeholder="Enter reason for banning this user..." required></textarea>
+                    </div>
+                    <div class="email-notice">
+                        <p style="color: #6c757d; font-size: 14px; margin: 0;">
+                            📧 A notification email will be sent to the user automatically.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeBanModal()">Cancel</button>
+                        <button type="submit" class="btn btn-ban">Ban User</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            background-color: #dc3545;
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+        }
+        
+        .close {
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            opacity: 0.7;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .email-notice {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 15px 0;
+            text-align: center;
+        }
+    </style>
+
+    <script>
+        function showBanModal(userId, username) {
+            document.getElementById('banUsername').textContent = username;
+            document.getElementById('banForm').action = `/admin/users/ban/${userId}`;
+            document.getElementById('banModal').style.display = 'flex';
+        }
+        
+        function closeBanModal() {
+            document.getElementById('banModal').style.display = 'none';
+            document.getElementById('banReason').value = '';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('banModal');
+            if (event.target === modal) {
+                closeBanModal();
+            }
+        }
+    </script>
+</body>
+</html>

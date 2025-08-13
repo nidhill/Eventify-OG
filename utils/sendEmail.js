@@ -85,6 +85,133 @@ export const sendOtpEmail = async (options) => {
     }
 };
 
+// Ban Notification Email
+export const sendBanEmail = async (options) => {
+    try {
+        const mailOptions = {
+            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
+            to: options.email,
+            subject: 'Account Suspension Notice - Eventify',
+            html: `
+<table width="100%" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 30px;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <tr>
+          <td style="background-color: #dc3545; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Account Suspended</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <p style="font-size: 18px; margin-bottom: 20px;">Hello ${options.username},</p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              We regret to inform you that your Eventify account has been suspended due to violations of our community guidelines.
+            </p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              <strong>Reason for suspension:</strong><br>
+              ${options.reason || 'Violation of community guidelines and terms of service.'}
+            </p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              During this suspension period, you will not be able to:
+            </p>
+            <ul style="font-size: 16px; color: #333; line-height: 1.6;">
+              <li>Create new events</li>
+              <li>Edit existing events</li>
+              <li>Access creator features</li>
+            </ul>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              If you believe this suspension was made in error, or if you would like to appeal this decision, 
+              please contact our support team at <strong>support@eventify.com</strong>
+            </p>
+
+            <p style="margin-top: 30px; font-size: 16px; color: #333;">Best regards,<br><strong>The Eventify Admin Team</strong></p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+`,
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('Ban notification email sent successfully to:', options.email);
+    } catch (error) {
+        console.error('Error sending ban notification email:', error);
+    }
+};
+
+// Unban Notification Email
+export const sendUnbanEmail = async (options) => {
+    try {
+        const mailOptions = {
+            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
+            to: options.email,
+            subject: 'Account Restored - Eventify',
+            html: `
+<table width="100%" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 30px;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <tr>
+          <td style="background-color: #28a745; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Account Restored</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <p style="font-size: 18px; margin-bottom: 20px;">Hello ${options.username},</p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              Great news! Your Eventify account has been restored and you now have full access to all features.
+            </p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              <strong>Account Status:</strong> Active ✅<br>
+              <strong>Previous Suspension:</strong> ${options.previousReason || 'Violation of community guidelines'}
+            </p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              You can now:
+            </p>
+            <ul style="font-size: 16px; color: #333; line-height: 1.6;">
+              <li>Create new events</li>
+              <li>Edit existing events</li>
+              <li>Access all creator features</li>
+              <li>Book tickets for events</li>
+            </ul>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="http://localhost:5000/userauth/home" 
+                 style="background-color: #28a745; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 16px;">
+                Return to Eventify
+              </a>
+            </div>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              We appreciate your patience during this time. Please ensure you follow our community guidelines to maintain a positive experience for all users.
+            </p>
+
+            <p style="margin-top: 30px; font-size: 16px; color: #333;">Best regards,<br><strong>The Eventify Admin Team</strong></p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+`,
+        };
+        await transporter.sendMail(mailOptions);
+        console.log('Unban notification email sent successfully to:', options.email);
+    } catch (error) {
+        console.error('Error sending unban notification email:', error);
+    }
+};
+
 // Ticket Email
 export const sendTicketEmail = async (options) => {
     try {

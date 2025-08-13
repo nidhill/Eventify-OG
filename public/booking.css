@@ -2,22 +2,22 @@
 /* BOOKING PAGE STYLES (Attractive)      */
 /* ======================================= */
 .booking-page-main {
-    padding: 4rem 5%;
+    padding: 2rem 5%;
 }
 
 .booking-container {
     max-width: 700px;
     margin: 0 auto;
     background-color: var(--card-bg-color);
-    padding: 2rem 3rem;
+    padding: 1.5rem 2.5rem;
     border-radius: 16px;
     border: 1px solid #333;
 }
 
 .booking-container h1 {
     text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 2.5rem;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .booking-summary {
@@ -55,21 +55,42 @@
 }
 
 .booking-form .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     position: relative;
+}
+
+.booking-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.booking-form .form-row .form-group {
+    margin-bottom: 0;
+}
+
+/* Compact spacing for better fit */
+.booking-form .form-group:last-of-type {
+    margin-bottom: 0.5rem;
+}
+
+.booking-form .form-row:last-of-type {
+    margin-bottom: 0.5rem;
 }
 
 .booking-form label {
     display: block;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
     color: var(--text-secondary-color);
+    font-size: 0.95rem;
 }
 
 .booking-form input {
     width: 100%;
-    padding: 1rem;
-    font-size: 1.1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
     border-radius: 8px;
     border: 1px solid #444;
     background-color: #2c2c41;
@@ -80,6 +101,131 @@
 .booking-form input:focus {
     outline: none;
     border-color: var(--primary-accent-color);
+}
+
+.booking-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #2c2c41;
+    color: var(--text-primary-color);
+    transition: border-color 0.3s ease;
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.4;
+}
+
+.booking-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-accent-color);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Custom scrollbar for textarea */
+.booking-form textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+.booking-form textarea::-webkit-scrollbar-track {
+    background: #1a144a;
+    border-radius: 4px;
+}
+
+.booking-form textarea::-webkit-scrollbar-thumb {
+    background: #4A90E2;
+    border-radius: 4px;
+}
+
+.booking-form textarea::-webkit-scrollbar-thumb:hover {
+    background: #7bb3f0;
+}
+
+/* Price input group styling */
+.price-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.free-entry-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(74, 144, 226, 0.1);
+    border: 1px solid rgba(74, 144, 226, 0.2);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.free-entry-checkbox:hover {
+    background-color: rgba(74, 144, 226, 0.15);
+    border-color: rgba(74, 144, 226, 0.3);
+}
+
+.free-entry-checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+    accent-color: var(--primary-accent-color);
+}
+
+.checkbox-label {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Free entry text styling */
+.free-entry-text {
+    color: #4CAF50;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 1px 2px rgba(76, 175, 80, 0.3);
+}
+
+.booking-form select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background-color: #2c2c41;
+    color: var(--text-primary-color);
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.booking-form select:focus {
+    outline: none;
+    border-color: var(--primary-accent-color);
+}
+
+.booking-form .btn-primary {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-accent-color), #7bb3f0);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.booking-form .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
 }
 
 .coupon-section {
@@ -200,4 +346,96 @@
     width: 100%;
     padding: 1rem;
     font-size: 1.2rem;
+}
+
+/* ======================================= */
+/* RESPONSIVE DESIGN                      */
+/* ======================================= */
+
+/* Large screens */
+@media (min-width: 1200px) {
+    .booking-container {
+        max-width: 800px;
+        padding: 2rem 3rem;
+    }
+    
+    .booking-form input,
+    .booking-form textarea,
+    .booking-form select {
+        padding: 0.875rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Medium screens */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .booking-container {
+        max-width: 650px;
+        padding: 1.75rem 2.25rem;
+    }
+}
+
+/* Small screens */
+@media (max-width: 767px) {
+    .booking-page-main {
+        padding: 1.5rem 3%;
+    }
+    
+    .booking-container {
+        padding: 1.25rem 1.75rem;
+        border-radius: 12px;
+    }
+    
+    .booking-container h1 {
+        font-size: 1.75rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    .booking-form .form-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .booking-form input,
+    .booking-form textarea,
+    .booking-form select {
+        padding: 0.625rem;
+        font-size: 0.95rem;
+    }
+    
+    .booking-form textarea {
+        min-height: 70px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .booking-page-main {
+        padding: 1rem 2%;
+    }
+    
+    .booking-container {
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+    }
+    
+    .booking-container h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .booking-form .form-row {
+        gap: 0.5rem;
+    }
+    
+    .booking-form input,
+    .booking-form textarea,
+    .booking-form select {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .booking-form textarea {
+        min-height: 60px;
+    }
 }

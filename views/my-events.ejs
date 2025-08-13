@@ -105,7 +105,13 @@
                                 <div class="event-details">
                                     <h3 class="card-title"><%= event.title %></h3>
                                     <p class="card-location"><%= event.date.toLocaleDateString() %></p>
-                                    <p class="card-price">₹<%= event.price %></p>
+                                    <p class="card-price">
+                                        <% if (event.price == 0) { %>
+                                            <span class="free-entry-text">Free Entry</span>
+                                        <% } else { %>
+                                            ₹<%= event.price %>
+                                        <% } %>
+                                    </p>
                                     <div class="event-actions">
                                         <a href="/events/<%= event._id %>" class="btn btn-secondary">View Details</a>
                                         <a href="/events/<%= event._id %>/edit" class="btn-edit">Edit</a>

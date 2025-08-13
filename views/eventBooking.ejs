@@ -112,6 +112,56 @@
             color: #4CAF50;
             font-weight: 600;
         }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item strong {
+            display: block;
+            color: #6366f1;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .event-description {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .event-description h3 {
+            color: #6366f1;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .event-description p {
+            color: #ccc;
+            line-height: 1.6;
+            margin: 0;
+        }
     </style>
 </head>
 <body class="compact-page-body">
@@ -129,13 +179,40 @@
                     <div class="info-grid">
                         <div class="info-item">
                             <strong>Date & Time</strong>
-                            <p><%= new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %></p>
+                            <% if (formattedDate !== 'Date not available') { %>
+                                <p><%= formattedDate %> at <%= formattedTime %></p>
+                            <% } else { %>
+                                <p style="color: #ff6b6b;">Date to be announced</p>
+                            <% } %>
                         </div>
                         <div class="info-item">
                             <strong>Location</strong>
                             <p><%= event.location %></p>
                         </div>
+                        <div class="info-item">
+                            <strong>Price</strong>
+                            <p>
+                                <% if (event.price == 0) { %>
+                                    <span class="free-entry-text">Free Entry</span>
+                                <% } else { %>
+                                    ₹<%= event.price %>
+                                <% } %>
+                            </p>
+                        </div>
+                        <div class="info-item">
+                            <strong>Category</strong>
+                            <p><%= event.category %></p>
+                        </div>
                     </div>
+                    
+                    <% if (event.description) { %>
+                        <div class="event-description">
+                            <h3>About This Event</h3>
+                            <p><%= event.description %></p>
+                        </div>
+                    <% } %>
+                    
+
                 </div>
             </div>
 
@@ -148,7 +225,11 @@
                         <input type="hidden" name="couponApplied" id="coupon-applied" value="false">
                         
                         <div class="price-display">
-                            Single Ticket Price: <strong>₹<span id="base-price"><%= event.price %></span></strong>
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free Entry - No Payment Required</span>
+                            <% } else { %>
+                                Single Ticket Price: <strong>₹<span id="base-price"><%= event.price %></span></strong>
+                            <% } %>
                         </div>
 
                         <div class="form-group">
@@ -165,6 +246,7 @@
                             <input type="number" id="ticket-quantity" name="quantity" value="1" min="1" max="10" required>
                         </div>
                         
+                        <% if (event.price > 0) { %>
                         <!-- Coupon Section -->
                         <div class="coupon-section">
                             <h3>Have a Coupon Code?</h3>
@@ -183,8 +265,20 @@
                                 <p class="total-amount">Total Amount: <span id="total-price">₹<%= event.price %></span></p>
                             </div>
                         </div>
+                        <% } else { %>
+                        <div class="free-event-notice">
+                            <p class="free-entry-text">🎉 This is a free event! No payment required.</p>
+                            <p>Just fill in your details and confirm your booking.</p>
+                        </div>
+                        <% } %>
 
-                        <button type="submit" class="btn btn-primary btn-confirm-booking">Proceed to Pay</button>
+                        <button type="submit" class="btn btn-primary btn-confirm-booking">
+                            <% if (event.price == 0) { %>
+                                Confirm Free Booking
+                            <% } else { %>
+                                Proceed to Pay
+                            <% } %>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -198,16 +292,25 @@
         const quantityDisplay = document.getElementById('quantity-display');
         const discountLine = document.getElementById('discount-line');
         const discountAmount = document.getElementById('discount-amount');
-        const basePrice = parseFloat(document.getElementById('base-price').textContent);
+        const basePrice = parseFloat(document.getElementById('base-price')?.textContent || '0');
         const couponInput = document.getElementById('coupon-code');
         const applyCouponBtn = document.getElementById('apply-coupon-btn');
         const couponMessage = document.getElementById('coupon-message');
         const couponAppliedInput = document.getElementById('coupon-applied');
         let isCouponApplied = false;
         let originalTotal = basePrice;
+        const isFreeEvent = <%= event.price == 0 %>;
 
         function calculateTotal() {
             const quantity = parseInt(ticketQuantityInput.value, 10) || 0;
+            
+            if (isFreeEvent) {
+                // Free event - no price calculation needed
+                totalPriceElement.textContent = 'Free';
+                quantityDisplay.textContent = quantity;
+                return;
+            }
+            
             let total = basePrice * quantity;
             originalTotal = total;
 
@@ -224,6 +327,10 @@
         }
 
         function applyCoupon() {
+            if (isFreeEvent) {
+                return; // No coupon needed for free events
+            }
+            
             const couponCode = couponInput.value.trim().toUpperCase();
             
             if (couponCode === 'EVENTFREE') {
@@ -253,16 +360,17 @@
             calculateTotal();
         }
 
-        ticketQuantityInput.addEventListener('input', calculateTotal);
-
-        applyCouponBtn.addEventListener('click', applyCoupon);
-
-        couponInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                applyCoupon();
-            }
-        });
+        // Only add event listeners if not a free event
+        if (!isFreeEvent) {
+            ticketQuantityInput.addEventListener('input', calculateTotal);
+            applyCouponBtn.addEventListener('click', applyCoupon);
+            couponInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    applyCoupon();
+                }
+            });
+        }
 
         // Initialize the page
         calculateTotal();

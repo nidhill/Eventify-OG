@@ -142,4 +142,66 @@
     .hero-content h1 {
         font-size: 2.5rem;
     }
+    
+    .about-hero {
+        height: 50vh;
+        padding: 0 3%;
+    }
+    
+    .our-mission,
+    .our-story,
+    .final-cta {
+        padding: 3rem 3%;
+    }
+    
+    .mission-grid {
+        gap: 1.5rem;
+    }
+    
+    .mission-item {
+        padding: 1.5rem;
+    }
+    
+    .story-text h2,
+    .final-cta h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-content .subtitle {
+        font-size: 1rem;
+    }
+    
+    .about-hero {
+        height: 40vh;
+        padding: 0 2%;
+    }
+    
+    .our-mission,
+    .our-story,
+    .final-cta {
+        padding: 2rem 2%;
+    }
+    
+    .mission-item {
+        padding: 1rem;
+    }
+    
+    .mission-item .icon {
+        font-size: 2.5rem;
+    }
+    
+    .story-text h2,
+    .final-cta h2 {
+        font-size: 1.75rem;
+    }
+    
+    .story-text p {
+        font-size: 0.9rem;
+    }
 }

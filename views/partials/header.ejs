@@ -1,21 +1,107 @@
 <%- include('loader') %>
+
+<% if (user && user.isBanned) { %>
+    <div class="ban-warning">
+        <div class="ban-warning-content">
+            <span class="ban-icon">⚠️</span>
+            <span class="ban-text">Your account has been suspended. Reason: <%= user.banReason || 'Violation of community guidelines' %></span>
+        </div>
+    </div>
+<% } %>
+
 <header class="site-header">
     <nav class="navbar">
         <a href="/userauth/home" class="navbar-brand">EVENTIFY</a>
+        
+        <!-- Mobile menu toggle -->
+        <button class="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
         <ul class="navbar-links">
             <li><a href="/userauth/home">Home</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/events">Events</a></li>
             
-            <% if (user && user.usertype === 'creator') { %>
+            <% if (user && user.usertype === 'creator' && !user.isBanned) { %>
                 <li><a href="/events/create">Create Event</a></li>
                 <li><a href="/events/my-events">My Events</a></li>
             <% } %>
 
-            <li><a href="#contact-section">Contact</a></li>
+            <% if (user && user.isAdmin && !user.isBanned) { %>
+                <li><a href="/admin/dashboard">Admin</a></li>
+            <% } %>
+
+            <!-- <li><a href="#contact-section">Contact</a></li> -->
         </ul>
         <div class="navbar-auth">
-            <a href="/userauth/logout" class="btn btn-logout">Logout</a>
+            <% if (user) { %>
+                <a href="/userauth/logout" class="btn btn-logout">Logout</a>
+            <% } else { %>
+                <a href="/userauth/showlogin" class="btn btn-logout">Login</a>
+            <% } %>
         </div>
     </nav>
 </header>
+
+<script>
+// Mobile navigation toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navbarLinks = document.querySelector('.navbar-links');
+    const navbar = document.querySelector('.navbar');
+    
+    if (mobileMenuToggle && navbarLinks) {
+        mobileMenuToggle.addEventListener('click', function() {
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            // Toggle menu
+            this.classList.toggle('active');
+            navbarLinks.classList.toggle('active');
+            navbar.classList.toggle('nav-open');
+            
+            // Update aria-expanded
+            this.setAttribute('aria-expanded', !isExpanded);
+            
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = !isExpanded ? 'hidden' : '';
+        });
+        
+        // Close menu when clicking on a link
+        const navLinks = navbarLinks.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                navbarLinks.classList.remove('active');
+                navbar.classList.remove('nav-open');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!navbar.contains(event.target)) {
+                mobileMenuToggle.classList.remove('active');
+                navbarLinks.classList.remove('active');
+                navbar.classList.remove('nav-open');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                mobileMenuToggle.classList.remove('active');
+                navbarLinks.classList.remove('active');
+                navbar.classList.remove('nav-open');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+    }
+});
+</script>

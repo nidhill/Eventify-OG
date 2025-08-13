@@ -22,7 +22,13 @@
                 <div class="summary-details">
                     <h2><%= event.title %></h2>
                     <p><%= event.date %></p>
-                    <p>Single Ticket Price: <strong>₹<span id="base-price"><%= event.price %></span></strong></p>
+                    <p>Single Ticket Price: <strong>
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free Entry</span>
+                            <% } else { %>
+                                ₹<span id="base-price"><%= event.price %></span>
+                            <% } %>
+                        </strong></p>
                 </div>
             </div>
 
@@ -58,10 +64,22 @@
 
                 <div class="price-details">
                     <div class="price-breakdown">
-                        <p>Base Price: ₹<span id="base-price-display"><%= event.price %></span></p>
+                        <p>Base Price: 
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free Entry</span>
+                            <% } else { %>
+                                ₹<span id="base-price-display"><%= event.price %></span>
+                            <% } %>
+                        </p>
                         <p>Quantity: <span id="quantity-display">1</span></p>
                         <p id="discount-line" style="display: none;">Discount: -₹<span id="discount-amount">0</span></p>
-                        <p class="total-amount">Total Amount: <span id="total-price">₹<%= event.price %></span></p>
+                        <p class="total-amount">Total Amount: 
+                            <% if (event.price == 0) { %>
+                                <span class="free-entry-text">Free</span>
+                            <% } else { %>
+                                <span id="total-price">₹<%= event.price %></span>
+                            <% } %>
+                        </p>
                     </div>
                 </div>
 

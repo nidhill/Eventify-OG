@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -31,6 +31,23 @@ const userSchema = new mongoose.Schema({
     default: ''
   },
   isVerified: {
+    type: Boolean,
+    default: false
+  },
+  // Puthiya fields
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
+  banReason: {
+    type: String,
+    default: ''
+  },
+  hasChosenUserType: {
     type: Boolean,
     default: false
   }

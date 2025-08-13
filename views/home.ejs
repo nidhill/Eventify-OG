@@ -6,12 +6,14 @@
     <title>Eventify.com</title>
     <link rel="stylesheet" href="/globals.css" />
     <link rel="stylesheet" href="/home.css" />
+    <link rel="stylesheet" href="/components.css" />
 </head>
 <body>
+  
 
     <%- include('partials/header') %>
 
-    <main>
+    <main id="main-content">
         <!-- ======================= HERO SECTION ======================= -->
         <section class="hero-section">
             <div class="hero-content">
@@ -33,6 +35,9 @@
                 <h2>Featured Events</h2>
                 <p>Be sure not to miss these Events today</p>
             </div>
+            
+         
+            
             <div class="event-grid">
                 <% if (events && events.length > 0) { %>
                     <% events.slice(0, 3).forEach(event => { %>
@@ -40,8 +45,25 @@
                             <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
                             <div class="event-details">
                                 <h3 class="card-title"><%= event.title %></h3>
-                                <p class="card-location"><%= event.date %></p>
-                                <p class="card-price"><%= event.price %></p>
+                                <p class="card-location">
+                            <% if (event.date && event.date instanceof Date && !isNaN(event.date.getTime())) { %>
+                                <%= event.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                            <% } else { %>
+                                Date TBA
+                            <% } %>
+                        </p>
+                                <p class="card-price">
+                                    <% if (event.price == 0) { %>
+                                        <span class="free-entry-text">Free Entry</span>
+                                    <% } else { %>
+                                        ₹<%= event.price %>
+                                    <% } %>
+                                </p>
+                                <p class="event-category"><%= event.category %></p>
+                                <div class="event-description" style="background-color: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; position: relative;">
+                                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, #4A90E2, #7bb3f0); border-radius: 2px 0 0 2px;"></div>
+                                    <p style="color: #a9b6c0; font-size: 0.85rem; line-height: 1.4; margin: 0; font-style: italic;"><%= event.description ? (event.description.length > 80 ? event.description.substring(0, 80) + '...' : event.description) : 'No description available' %></p>
+                                </div>
                                 <a href="/events/<%= event._id %>" class="btn btn-secondary">Get Tickets</a>
                             </div>
                         </article>
@@ -112,6 +134,103 @@
     </main>
 
     <%- include('partials/footer') %>
+
+    <!-- User Type Selection Modal -->
+    <% if (needsUserTypeSelection) { %>
+    <div id="userTypeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to Eventify! 🎉</h2>
+                <p>Please choose how you'd like to use Eventify:</p>
+            </div>
+            <div class="modal-body">
+                <div class="user-type-options">
+                    <div class="user-type-option" data-type="attendee">
+                        <div class="option-icon">🎫</div>
+                        <h3>Attendee</h3>
+                        <p>Browse and book tickets for events</p>
+                        <ul>
+                            <li>Discover amazing events</li>
+                            <li>Book tickets easily</li>
+                            <li>Manage your bookings</li>
+                        </ul>
+                    </div>
+                    <div class="user-type-option" data-type="creator">
+                        <div class="option-icon">🎭</div>
+                        <h3>Creator</h3>
+                        <p>Create and manage your own events</p>
+                        <ul>
+                            <li>Create custom events</li>
+                            <li>Manage ticket sales</li>
+                            <li>Track event analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="note">You can change this later in your profile settings</p>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <script>
+        // User Type Selection Logic
+        <% if (needsUserTypeSelection) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('userTypeModal');
+            const userTypeOptions = document.querySelectorAll('.user-type-option');
+            
+            userTypeOptions.forEach(option => {
+                option.addEventListener('click', async function() {
+                    const selectedType = this.dataset.type;
+                    
+                    try {
+                        const response = await fetch('/userauth/update-usertype', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ usertype: selectedType })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Hide modal
+                            modal.style.display = 'none';
+                            
+                            // Show success message
+                            showNotification(`Welcome! You're now a ${selectedType}!`, 'success');
+                            
+                            // Reload page to update user data
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showNotification('Failed to update user type. Please try again.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showNotification('An error occurred. Please try again.', 'error');
+                    }
+                });
+            });
+        });
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        <% } %>
+    </script>
 
 </body>
 </html>
