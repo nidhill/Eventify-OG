@@ -1,7 +1,7 @@
 import User from '../models/userModel.js';
 import Event from '../models/eventModel.js';
 import Otp from '../models/otpModel.js';
-import { sendWelcomeEmail, sendOtpEmail } from '../../utils/sendEmail.js';
+import { sendWelcomeEmail, sendOtpEmail } from '../utils/sendEmail.js';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 

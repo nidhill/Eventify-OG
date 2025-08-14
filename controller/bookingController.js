@@ -1,6 +1,6 @@
 import Event from '../models/eventModel.js';
 import Booking from '../models/bookingModel.js';
-import { sendTicketEmail } from '../../utils/sendEmail.js';
+import { sendTicketEmail } from '../utils/sendEmail.js';
 
 // ബുക്കിംഗ് പേജ് കാണിക്കാൻ
 export const showBookingPage = async (req, res) => {
