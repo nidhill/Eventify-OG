@@ -1,3 +1,4 @@
+dotenv.config()
 import express from 'express'
 import dotenv from 'dotenv'
 import connectTodbs from './db.js'
@@ -12,7 +13,7 @@ import passport from 'passport';
 import './config/passport.js';
 import methodOverride from 'method-override';
 
-dotenv.config() 
+// dotenv.config() 
 const app = express()
 
 const __filename = fileURLToPath(import.meta.url);

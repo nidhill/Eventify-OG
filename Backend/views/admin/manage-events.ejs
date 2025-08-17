@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Events</title>
+    <link rel="stylesheet" href="/home.css">
+    <style>
+        .manage-container { max-width: 1200px; margin: 2rem auto; padding: 1rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: var(--card-bg-color); }
+        .btn-delete { background-color: #dc3545; color: white; }
+        .btn-edit { background-color: #ffc107; color: black; text-decoration: none; padding: 8px 12px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="manage-container">
+        <h1>Manage Events</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Creator</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% events.forEach(function(event) { %>
+                    <tr>
+                        <td><%= event.title %></td>
+                        <td><%= event.createdBy ? event.createdBy.username : 'Unknown User' %></td>
+                        <td><%= new Date(event.date).toLocaleDateString() %></td>
+                        <td><%= event.location %></td>
+                        <td>
+                            <a href="/events/<%= event._id %>/edit" class="btn-edit">Edit</a>
+                            <form action="/admin/events/delete/<%= event._id %>" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-delete">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>

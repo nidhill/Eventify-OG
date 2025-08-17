@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Successful! | Eventify</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="/booking.css">
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <main class="booking-page-main">
+        <div class="booking-container success-container">
+            <img src="https://i.postimg.cc/Yq3C2y99/success-tick.png" alt="Success" class="success-icon">
+            <h1>Booking Confirmed!</h1>
+            <% if (event && booking) { %>
+                <p class="success-message">
+                    Thank you for your booking. Your tickets for <strong><%= event.title || 'Event' %></strong> have been confirmed.
+                </p>
+                
+                <div class="booking-receipt">
+                    <h3>Booking Summary</h3>
+                    <p><strong>Event:</strong> <%= event.title || 'Event' %></p>
+                    <p><strong>Number of Tickets:</strong> <%= booking.quantity || 1 %></p>
+                    <p><strong>Total Amount Paid:</strong> ₹<%= booking.totalAmount ? booking.totalAmount.toFixed(2) : '0.00' %></p>
+                    <p><strong>Booking ID:</strong> <%= booking._id || 'N/A' %></p>
+                    <p><strong>Status:</strong> <span style="color: #4CAF50; font-weight: bold;">Completed</span></p>
+                </div>
+            <% } else { %>
+                <p class="success-message">
+                    Thank you for your booking. Your tickets have been confirmed.
+                </p>
+                
+                <div class="booking-receipt">
+                    <h3>Booking Summary</h3>
+                    <p><strong>Booking ID:</strong> <%= booking ? booking._id : 'N/A' %></p>
+                    <p><strong>Status:</strong> <span style="color: #4CAF50; font-weight: bold;">Completed</span></p>
+                </div>
+            <% } %>
+
+            <a href="/userauth/home" class="btn btn-primary">Back to Home</a>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+</body>
+</html>
