@@ -105,7 +105,7 @@ export const showEventBookingPage = async (req, res) => {
 // പുതിയ ഫംഗ്ഷൻ: ഇവന്റ് ഉണ്ടാക്കാനുള്ള പേജ് കാണിക്കാൻ
 export const showCreateEventPage = async (req, res) => {
     try {
-        console.log('Showing create event page for user:', req.user ? req.user.username : 'Not logged in');
+        console.log('Showing create event page for user:', req.user ? req.user.name : 'Not logged in');
         
         // Check if user is banned
         if (req.user.isBanned) {
@@ -265,7 +265,7 @@ export const showEditEventPage = async (req, res) => {
             userId: req.user._id.toString(),
             eventCreator: event.createdBy.toString(),
             isAdmin: req.user.isAdmin,
-            username: req.user.username
+            username: req.user.name
         });
         
         // യൂസർ ഈ ഇവന്റിന്റെ ക്രിയേറ്റർ ആണോ അല്ലെങ്കിൽ admin ആണോ എന്ന് പരിശോധിക്കുക
@@ -337,7 +337,7 @@ export const updateEvent = async (req, res) => {
             userId: req.user._id.toString(),
             eventCreator: existingEvent.createdBy.toString(),
             isAdmin: req.user.isAdmin,
-            username: req.user.username
+            username: req.user.name
         });
         
         if (existingEvent.createdBy.toString() !== req.user._id.toString() && !req.user.isAdmin) {
@@ -399,7 +399,7 @@ export const deleteEvent = async (req, res) => {
             userId: req.user._id.toString(),
             eventCreator: event.createdBy.toString(),
             isAdmin: req.user.isAdmin,
-            username: req.user.username
+            username: req.user.name
         });
         
         if (event.createdBy.toString() !== req.user._id.toString() && !req.user.isAdmin) {
