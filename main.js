@@ -79,7 +79,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       status: 'Google OAuth is configured',
       clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
-      callbackUrl: "http://localhost:5000/auth/google/callback"
+      callbackUrl: "https://eventify-com.onrender.com/auth/google/callback"
     });
   });
 } else {
