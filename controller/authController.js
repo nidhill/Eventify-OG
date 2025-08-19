@@ -8,26 +8,45 @@ import bcrypt from 'bcryptjs';
 // Signup function
 export const signup = async (req, res) => {
   try {
-    const { username, email, password, usertype } = req.body;
+    const { name, username, email, password, usertype } = req.body;
     
-    if (!username || !email || !password || !usertype) {
+    if (!name || !username || !email || !password || !usertype) {
       return res.render('signup', { error: 'All fields are required' });
     }
     
-    const existingUser = await User.findOne({ email });
-    if (existingUser && existingUser.isVerified) {
+    // Check for existing email
+    const existingUserByEmail = await User.findOne({ email });
+    if (existingUserByEmail && existingUserByEmail.isVerified) {
       return res.render('signup', { error: 'User already exists with this email' });
     }
-    if (existingUser && !existingUser.isVerified) {
+    if (existingUserByEmail && !existingUserByEmail.isVerified) {
         return res.redirect(`/userauth/verify-otp?email=${email}`);
     }
 
+    // Check for existing username
+    const existingUserByUsername = await User.findOne({ username });
+    if (existingUserByUsername) {
+      return res.render('signup', { error: 'Username already taken. Please choose a different username.' });
+    }
+
+    // Check for existing name (optional - you can remove this if you want to allow same names)
+    const existingUserByName = await User.findOne({ name });
+    if (existingUserByName) {
+      return res.render('signup', { error: 'A user with this name already exists. Please use a different name.' });
+    }
+
+    // Generate avatar based on usertype
     let avatarUrl = '';
-    if (usertype === 'Male') avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&facialHairType=Beard&clotheType=ShirtCrewNeck';
-    else if (usertype === 'Female') avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&clotheType=BlazerShirt';
-    else avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck';
+    if (usertype === 'attendee') {
+      avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&clotheType=ShirtCrewNeck';
+    } else if (usertype === 'creator') {
+      avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=BlazerShirt';
+    } else {
+      avatarUrl = 'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&clotheType=ShirtCrewNeck';
+    }
 
     const newUser = await User.create({ 
+      name,
       username, 
       email, 
       password, 
@@ -47,7 +66,7 @@ export const signup = async (req, res) => {
     
     // Send OTP email
     try {
-      await sendOtpEmail({ email: newUser.email, name: newUser.username, otp: otp });
+      await sendOtpEmail({ email: newUser.email, name: newUser.name, otp: otp });
       console.log('OTP email sent successfully to:', newUser.email);
     } catch (emailError) {
       console.error('Failed to send OTP email:', emailError);
@@ -59,7 +78,37 @@ export const signup = async (req, res) => {
 
   } catch (error) {
     console.error('Signup error:', error);
+    
+    // Handle specific MongoDB errors
+    if (error.code === 11000) {
+      if (error.keyPattern.username) {
+        return res.render('signup', { error: 'Username already taken. Please choose a different username.' });
+      }
+      if (error.keyPattern.email) {
+        return res.render('signup', { error: 'Email already registered. Please use a different email or login.' });
+      }
+    }
+    
     res.render('signup', { error: 'Signup failed. Please try again.' });
+  }
+};
+
+// Check username availability
+export const checkUsername = async (req, res) => {
+  try {
+    const { username } = req.query;
+    
+    if (!username) {
+      return res.json({ available: false, message: 'Username is required' });
+    }
+    
+    const existingUser = await User.findOne({ username });
+    const available = !existingUser;
+    
+    res.json({ available, message: available ? 'Username available' : 'Username already taken' });
+  } catch (error) {
+    console.error('Username check error:', error);
+    res.status(500).json({ available: false, message: 'Error checking username' });
   }
 };
 
@@ -105,7 +154,7 @@ export const verifyOtp = async (req, res) => {
         
         // Send welcome email
         try {
-            await sendWelcomeEmail({ email: user.email, name: user.username });
+            await sendWelcomeEmail({ email: user.email, name: user.name });
             console.log('Welcome email sent successfully to:', user.email);
         } catch (emailError) {
             console.error('Failed to send welcome email:', emailError);

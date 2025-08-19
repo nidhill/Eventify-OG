@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eventify Signup</title>
+  <link rel="stylesheet" href="/globals.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+    }
+
+    .left-panel {
+      width: 50%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bg-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.7) contrast(1.1);
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(90, 34, 200, 0.3), rgba(103, 133, 234, 0.2));
+    }
+
+    .eventify-title {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      color: white;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+      z-index: 10;
+    }
+
+    .hero-text {
+      position: absolute;
+      bottom: 60px;
+      left: 30px;
+      right: 30px;
+      color: white;
+      z-index: 10;
+    }
+
+    .hero-text h2 {
+      font-size: 36px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .hero-text p {
+      font-size: 18px;
+      opacity: 0.9;
+      line-height: 1.6;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+    }
+
+    .right-panel {
+      width: 50%;
+      background: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+      color: white;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      pointer-events: none;
+    }
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .form-title {
+      font-size: 32px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(45deg, #5a22c8, #6785ea);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-subtext {
+      color: #b8b8b8;
+      font-size: 16px;
+      margin-bottom: 35px;
+      font-weight: 300;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #5a22c8;
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 20px rgba(90, 34, 200, 0.3);
+    }
+
+    .form-group input::placeholder {
+      color: #888;
+    }
+
+    .form-group select {
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat;
+      background-position: right 15px top 50%;
+      background-size: .65em auto;
+    }
+
+    .form-group select:required:invalid {
+      color: #888;
+    }
+
+    .form-group option {
+      color: #333;
+      background: white;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(45deg, #5a22c8, #6785ea);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(90, 34, 200, 0.4);
+    }
+
+    .or {
+      text-align: center;
+      margin: 25px 0;
+      color: #888;
+      font-size: 14px;
+      position: relative;
+    }
+
+    .or::before,
+    .or::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .or::before {
+      left: 0;
+    }
+
+    .or::after {
+      right: 0;
+    }
+
+    .google-auth {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .google-btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .google-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .google-logo {
+      width: 20px;
+      height: 20px;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 25px;
+      font-size: 14px;
+      color: #b8b8b8;
+    }
+
+    .login-link a {
+      color: #6785ea;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+      color: #5a22c8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .left-panel {
+        display: none;
+      }
+      .right-panel {
+        width: 100%;
+        padding: 40px 20px;
+      }
+      .hero-text h2 {
+        font-size: 28px;
+      }
+      .hero-text p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <%- include('partials/loader') %>
+  <div class="container">
+    <div class="left-panel">
+      <img src="https://i.postimg.cc/Zq4C0wj2/new-image-for-login.jpg" alt="Musician performing on stage" class="bg-image" />
+      <div class="overlay"></div>
+      <h1 class="eventify-title">EVENTIFY</h1>
+      <div class="hero-text">
+        <h2>Join Eventify!</h2>
+        <p>Create your account and start discovering amazing events. Whether you're an attendee or creator, we've got you covered.</p>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="form-wrapper">
+        <h1 class="form-title">CREATE ACCOUNT</h1>
+        <p class="form-subtext">Join the community and start your journey!</p>
+
+        <form action="/userauth/signup" method="POST">
+          <div class="form-group">
+            <input type="text" name="username" placeholder="Enter your full name" required />
+          </div>
+          <div class="form-group">
+            <input type="email" name="email" placeholder="Enter your email" required />
+          </div>
+          <div class="form-group">
+            <input type="password" name="password" placeholder="Create a password" required />
+          </div>
+          <div class="form-group">
+            <select name="usertype" required>
+              <option value="" disabled selected>I am signing up to...</option>
+              <option value="attendee">Book tickets for events</option>
+              <option value="creator">Create and manage events</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+
+        <p class="or">or continue with</p>
+
+        <div class="google-auth">
+          <a href="/auth/google" class="google-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/800px-Google_%22G%22_logo.svg.png" alt="Google Logo" class="google-logo" />
+            <span>Signup with Google</span>
+          </a>
+        </div>
+
+        <div class="login-link">
+          <p>Already have an account? <a href="/userauth/showlogin">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

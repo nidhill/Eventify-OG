@@ -68,7 +68,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   app.get('/auth/google/callback', 
     passport.authenticate('google', { 
       successRedirect: '/userauth/home',
-      failureRedirect: '/userauth/auth/google/failure',
+      failureRedirect: '/userauth/showlogin?error=oauth_failed',
       failureFlash: true
     })
   );
@@ -79,7 +79,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       status: 'Google OAuth is configured',
       clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
-      callbackUrl: "https://eventify-com.onrender.com/auth/google/callback"
+      callbackUrl: process.env.CALLBACK_URL || "https://eventify-com.onrender.com/auth/google/callback"
+
     });
   });
 } else {

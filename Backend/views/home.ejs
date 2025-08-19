@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventify.com</title>
+    <link rel="stylesheet" href="/globals.css" />
+    <link rel="stylesheet" href="/home.css" />
+    <link rel="stylesheet" href="/components.css" />
+</head>
+<body>
+  
+
+    <%- include('partials/header') %>
+
+    <main id="main-content">
+        <!-- ======================= HERO SECTION ======================= -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <p class="hero-subtitle">Book your</p>
+                <h1 class="hero-title">Tickets for Event!</h1>
+                <p class="hero-tagline">All the fun starts here. Safe. Secure, Reliable ticketing. Your ticket to live entertainment!</p>
+                <a href="#events" class="btn btn-primary">View More</a>
+            </div>
+            <div class="hero-image-gallery">
+                <img src="https://i.postimg.cc/nzBpN95Z/79a300208390621-66ed92c08ac20.jpg" alt="Event concert photo 1">
+                <img src="https://i.postimg.cc/dQLXxgL6/5f5e93208390621-66ed92cb302e4.jpg" alt="Event concert photo 2">
+                <img src="https://i.postimg.cc/vT2Xh8d9/2433c2208390621-66ed92ca2fa4b.jpg" alt="Event concert photo 3">
+            </div>
+        </section>
+
+        <!-- ======================= FEATURED EVENTS ======================= -->
+        <section id="events" class="featured-events">
+            <div class="section-header">
+                <h2>Featured Events</h2>
+                <p>Be sure not to miss these Events today</p>
+            </div>
+            
+         
+            
+            <div class="event-grid">
+                <% if (events && events.length > 0) { %>
+                    <% events.slice(0, 3).forEach(event => { %>
+                        <article class="event-card">
+                            <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
+                            <div class="event-details">
+                                <h3 class="card-title"><%= event.title %></h3>
+                                <p class="card-location">
+                            <% if (event.date && event.date instanceof Date && !isNaN(event.date.getTime())) { %>
+                                <%= event.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                            <% } else { %>
+                                Date TBA
+                            <% } %>
+                        </p>
+                                <p class="card-price">
+                                    <% if (event.price == 0) { %>
+                                        <span class="free-entry-text">Free Entry</span>
+                                    <% } else { %>
+                                        ₹<%= event.price %>
+                                    <% } %>
+                                </p>
+                                <p class="event-category"><%= event.category %></p>
+                                <div class="event-description" style="background-color: rgba(74, 144, 226, 0.1); border: 1px solid rgba(74, 144, 226, 0.2); border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; position: relative;">
+                                    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(to bottom, #4A90E2, #7bb3f0); border-radius: 2px 0 0 2px;"></div>
+                                    <p style="color: #a9b6c0; font-size: 0.85rem; line-height: 1.4; margin: 0; font-style: italic;"><%= event.description ? (event.description.length > 80 ? event.description.substring(0, 80) + '...' : event.description) : 'No description available' %></p>
+                                </div>
+                                <a href="/events/<%= event._id %>" class="btn btn-secondary">Get Tickets</a>
+                            </div>
+                        </article>
+                    <% }) %>
+                <% } else { %>
+                    <p>No featured events available at the moment.</p>
+                <% } %>
+            </div>
+        </section>
+
+        <!-- ======================= TRENDING CATEGORIES ======================= -->
+        <section class="trending-categories">
+            <div class="section-header">
+                <h2>Trending categories</h2>
+                <p>Be sure not to miss these Events today.</p>
+            </div>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Music</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+                <div class="category-card">
+                    <div class="category-name">Rap</div>
+                    <button class="btn btn-preview">Preview</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ======================= TRUSTED BY ======================= -->
+        <section class="trusted-by">
+             <div class="section-header">
+                <h2>Trusted by over 150 organizations</h2>
+                <p>in more than 50 countries</p>
+            </div>
+            <div class="logos-container">
+                <div class="logo-item">LOREAL</div>
+                <div class="logo-item">NEW BALANCE</div>
+                <div class="logo-item">ZARA</div>
+                <div class="logo-item">H&M</div>
+            </div>
+        </section>
+
+        <!-- ======================= JOIN US (CTA) ======================= -->
+        <section class="join-us-cta">
+            <div class="cta-images">
+                <img src="https://i.postimg.cc/Mpv0M7f5/8c631a208433315-Y3-Jvc-Cwy-NDgw-LDE5-Mzks-MCw3-ODU.jpg" alt="User avatar 1">
+                <img src="https://i.postimg.cc/KcpwdNbr/13e763227665327-Y3-Jvc-Cwx-Njky-LDEz-Mj-Ms-MCw0-Mj-M.png" alt="User avatar 2">
+                <img src="https://i.postimg.cc/FFCV9C7z/3270b0196581869-66221b7a93c84.jpg" alt="User avatar 3">
+            </div>
+            <div class="cta-content">
+                 <h3>Join our Events and Participate in the<br>next Lorem contest.</h3>
+                 <a href="#" class="btn btn-primary">Join Us</a>
+            </div>
+            <div class="cta-images">
+                <img src="https://i.postimg.cc/xYGKtC58/2f631d208390621-66ed92c8dc31e.jpg" alt="User avatar 4">
+                <img src="https://i.postimg.cc/m25cz0sz/bd79ed193543345-65edd7cd016b5.png" alt="User avatar 5">
+                <img src="https://i.postimg.cc/GmVFk4kC/f1c1af206997015-Y3-Jvc-Cwx-NDAw-LDEw-OTUs-MCwx-NTI.jpg" alt="User avatar 6">
+            </div>
+        </section>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <!-- User Type Selection Modal -->
+    <% if (needsUserTypeSelection) { %>
+    <div id="userTypeModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Welcome to Eventify! 🎉</h2>
+                <p>Please choose how you'd like to use Eventify:</p>
+            </div>
+            <div class="modal-body">
+                <div class="user-type-options">
+                    <div class="user-type-option" data-type="attendee">
+                        <div class="option-icon">🎫</div>
+                        <h3>Attendee</h3>
+                        <p>Browse and book tickets for events</p>
+                        <ul>
+                            <li>Discover amazing events</li>
+                            <li>Book tickets easily</li>
+                            <li>Manage your bookings</li>
+                        </ul>
+                    </div>
+                    <div class="user-type-option" data-type="creator">
+                        <div class="option-icon">🎭</div>
+                        <h3>Creator</h3>
+                        <p>Create and manage your own events</p>
+                        <ul>
+                            <li>Create custom events</li>
+                            <li>Manage ticket sales</li>
+                            <li>Track event analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="note">You can change this later in your profile settings</p>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <script>
+        // User Type Selection Logic
+        <% if (needsUserTypeSelection) { %>
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('userTypeModal');
+            const userTypeOptions = document.querySelectorAll('.user-type-option');
+            
+            userTypeOptions.forEach(option => {
+                option.addEventListener('click', async function() {
+                    const selectedType = this.dataset.type;
+                    
+                    try {
+                        const response = await fetch('/userauth/update-usertype', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ usertype: selectedType })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Hide modal
+                            modal.style.display = 'none';
+                            
+                            // Show success message
+                            showNotification(`Welcome! You're now a ${selectedType}!`, 'success');
+                            
+                            // Reload page to update user data
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1500);
+                        } else {
+                            showNotification('Failed to update user type. Please try again.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showNotification('An error occurred. Please try again.', 'error');
+                    }
+                });
+            });
+        });
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        <% } %>
+    </script>
+
+</body>
+</html>

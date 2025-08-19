@@ -4,29 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Your Account | Eventify</title>
-    <link rel="stylesheet" href="/globals.css">
-    <link rel="stylesheet" href="/signup.css"> <!-- സൈൻ-അപ്പ് പേജിലെ അതേ സ്റ്റൈൽ ഉപയോഗിക്കുന്നു -->
+    <link rel="stylesheet" href="/otp.css"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <%- include('partials/loader') %>
     <div class="container">
         <div class="left-panel">
-            <img src="https://i.gifer.com/embedded/download/OZpL.gif" alt="Event Crowd" class="bg-image" />
-            <h1 class="eventify-title">EVENTIFY</h1>
+            <div class="logo">EVENTIFY</div>
+            <div class="image-overlay"></div>
+            <div class="left-content">
+                <h1>Verify Your Account</h1>
+                <p>
+                    A simple step to get you started on your journey. Let's make sure it's really you!
+                </p>
+            </div>
         </div>
         <div class="right-panel">
-            <div class="form-wrapper">
-                <h1 class="form-title">EMAIL VERIFICATION</h1>
-                <p class="form-subtext">We've sent a 6-digit OTP to <strong><%= email %></strong>. Please enter it below to verify your account.</p>
+            <div class="signup-box">
+                <h2>EMAIL VERIFICATION</h2>
+                <p>We've sent a 6-digit OTP to <strong><%= email %></strong>. Please enter it below to verify your account.</p>
                 
                 <% if (error) { %>
-                    <p style="color: red; text-align: center; margin-bottom: 1rem;"><%= error %></p>
+                    <p class="error-message"><%= error %></p>
                 <% } %>
 
                 <form action="/userauth/verify-otp" method="POST">
                     <input type="hidden" name="email" value="<%= email %>">
-                    <input type="text" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6">
-                    <button type="submit">Verify Account</button>
+                    <div class="input-group">
+                        <input type="text" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6">
+                    </div>
+                    <button type="submit" class="create-account-btn">Verify Account</button>
                 </form>
 
                 <div class="login-link">

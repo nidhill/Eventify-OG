@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { home, login, showlogin, showsignup, signup, showOtpPage, verifyOtp, updateUserType } from '../controller/authController.js';
+import { home, login, showlogin, showsignup, signup, showOtpPage, verifyOtp, updateUserType, checkUsername } from '../controller/authController.js';
 import { isLoggedIn, isNotLoggedIn } from '../middlewares/authmiddleware.js';
 
 const router = express.Router();
@@ -10,6 +10,7 @@ router.post('/signup', isNotLoggedIn, signup);
 router.post('/login', isNotLoggedIn, login);
 router.get('/showsignup', isNotLoggedIn, showsignup);
 router.get('/showlogin', isNotLoggedIn, showlogin);
+router.get('/check-username', isNotLoggedIn, checkUsername);
 
 // OTP Routes
 router.get('/verify-otp', isNotLoggedIn, showOtpPage);

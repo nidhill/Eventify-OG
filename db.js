@@ -5,13 +5,18 @@ dotenv.config()
 
 const connectTodbs = async() => {
     try {
-        // The console.log should be after the await, not inside it
-        await mongoose.connect(process.env.db_host);
+        // Use environment variable or fallback to local MongoDB
+        const mongoUri = process.env.MONGODB_URI || process.env.db_host || "mongodb://localhost:27017/eventify";
+        
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(mongoUri);
         
         console.log('mongoDB connected✅');
 
     } catch (error) {
         console.error('Mongoose connection error:❌', error);
+        console.log('Please ensure MongoDB is running and check your connection string');
+        console.log('You can set MONGODB_URI or db_host in your .env file');
         process.exit(1); // Exit process with failure
     }
 } 

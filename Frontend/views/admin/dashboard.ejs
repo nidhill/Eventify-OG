@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/home.css">
+    <style>
+        .dashboard-container { max-width: 1200px; margin: 2rem auto; padding: 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background-color: var(--card-bg-color); padding: 1.5rem; border-radius: 8px; text-align: center; }
+        .stat-card h3 { font-size: 1.2rem; color: var(--text-secondary-color); }
+        .stat-card p { font-size: 2.5rem; font-weight: bold; }
+        .admin-nav { display: flex; gap: 1rem; justify-content: center; }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="dashboard-container">
+        <h1>Admin Dashboard</h1>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <p><%= userCount %></p>
+                <small style="color: #6c757d;">Active: <%= activeUsers %> | Banned: <%= bannedUsers %></small>
+            </div>
+            <div class="stat-card">
+                <h3>Total Events</h3>
+                <p><%= eventCount %></p>
+            </div>
+            <div class="stat-card">
+                <h3>Banned Users</h3>
+                <p><%= bannedUsers %></p>
+                <% if (bannedUsers > 0) { %>
+                    <small style="color: #dc3545;">Click "Manage Users" to view details</small>
+                <% } %>
+            </div>
+            <!-- <div class="stat-card">
+                <h3>Email System</h3>
+                <p style="color: #28a745;">✅ Active</p>
+                <small style="color: #6c757d;">Ban/Unban notifications</small>
+            </div> -->
+        </div>
+        <div class="admin-nav">
+            <a href="/admin/manage-users" class="btn btn-primary">Manage Users</a>
+            <a href="/admin/manage-events" class="btn btn-primary">Manage Events</a>
+        </div>
+    </main>
+</body>
+</html>
