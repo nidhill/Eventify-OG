@@ -80,8 +80,8 @@
     padding: 0.8rem;
     font-size: 1rem;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #2c2c41;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg, #1f2937);
     color: var(--text-primary-color);
 }
 

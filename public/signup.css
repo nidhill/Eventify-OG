@@ -3,14 +3,17 @@
 /* ======================================= */
 
 :root {
-  --dark-blue: #141723;
-  --card-bg: #1e212b;
-  --accent-purple: #8A2BE2; /* A dark purple for accents */
-  --light-text: #E5E5E5;
-  --gray-text: #A0A0A0;
-  --input-bg: #2b2e3a;
-  --input-border: #3b3e4a;
-  --hover-purple: #a252ff;
+  --dark-blue: #0a0a0f;
+  --card-bg: #1a1a2e;
+  --accent-purple: #6366f1;
+  --light-text: #ffffff;
+  --gray-text: #9ca3af;
+  --input-bg: #1f2937;
+  --input-border: #374151;
+  --hover-purple: #818cf8;
+  --success-green: #10b981;
+  --error-red: #ef4444;
+  --warning-yellow: #f59e0b;
 }
 
 * {
@@ -26,7 +29,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #141723 0%, #1a1a2e 50%, #16213e 100%);
+  background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #16213e 100%);
 }
 
 .container {
@@ -137,7 +140,7 @@ input, select {
 input:focus, select:focus {
   outline: none;
   border-color: var(--accent-purple);
-  box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
   transform: translateY(-1px);
 }
 
@@ -159,7 +162,7 @@ select {
   padding: 15px;
   border: none;
   border-radius: 8px;
-  background-image: linear-gradient(to right, #8A2BE2, #6A1BAE);
+  background-image: linear-gradient(to right, var(--accent-purple), var(--hover-purple));
   color: white;
   font-size: 1.1rem;
   font-weight: 600;
@@ -186,7 +189,7 @@ select {
 
 .signin-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
 }
 
 .signin-btn:active {
@@ -240,9 +243,9 @@ select {
 
 .google-btn:hover {
   border-color: var(--accent-purple);
-  background: rgba(138, 43, 226, 0.1);
+  background: rgba(99, 102, 241, 0.1);
   transform: translateY(-1px);
-  box-shadow: 0 5px 15px rgba(138, 43, 226, 0.2);
+  box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
 }
 
 .google-btn svg {

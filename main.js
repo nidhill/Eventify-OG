@@ -79,7 +79,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       status: 'Google OAuth is configured',
       clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
-      callbackUrl: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/userauth/home"
+      callbackUrl: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/auth/google/callback"
 
     });
   });

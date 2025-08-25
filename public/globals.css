@@ -10,7 +10,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #05022e; /* Use the same background as the body */
+    background-color: #0a0a0f; /* Use the same background as the body */
     z-index: 9999;
     display: flex;
     justify-content: center;
@@ -23,7 +23,7 @@
 
 .loader {
     border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #4A90E2; /* Blue from your theme */
+    border-top: 8px solid #6366f1; /* Purple from your theme */
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -50,9 +50,9 @@ body {
   margin: 0px;
   height: 100%;
 }
-/* a blue color as a generic focus style */
+/* a purple color as a generic focus style */
 button:focus-visible {
-  outline: 2px solid #4a90e2 !important;
+  outline: 2px solid #6366f1 !important;
   outline: -webkit-focus-ring-color auto 5px !important;
 }
 a {

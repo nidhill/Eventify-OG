@@ -6,13 +6,18 @@ html {
   scroll-behavior: smooth;
 }
 :root {
-  --bg-color: #05022e;
-  --card-bg-color: #100b38;
-  --primary-accent-color: #4A90E2;
-  --text-primary-color: #FFFFFF;
-  --text-secondary-color: #aeb2b7;
-  --border-color: rgba(121, 121, 121, 0.7);
+  --bg-color: #0a0a0f;
+  --card-bg-color: #1a1a2e;
+  --primary-accent-color: #6366f1;
+  --text-primary-color: #ffffff;
+  --text-secondary-color: #9ca3af;
+  --border-color: rgba(55, 65, 81, 0.7);
   --font-family-main: 'Poppins', sans-serif;
+  --success-green: #10b981;
+  --error-red: #ef4444;
+  --warning-yellow: #f59e0b;
+  --input-bg: #1f2937;
+  --hover-purple: #818cf8;
 }
 
 * {
@@ -284,7 +289,7 @@ section {
   background-color: var(--card-bg-color);
   border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #333;
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -341,8 +346,8 @@ section {
 }
 
 .event-description {
-  background-color: rgba(74, 144, 226, 0.1);
-  border: 1px solid rgba(74, 144, 226, 0.2);
+  background-color: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 8px;
   padding: 0.75rem;
   margin-bottom: 1rem;
@@ -356,7 +361,7 @@ section {
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, var(--primary-accent-color), #7bb3f0);
+  background: linear-gradient(to bottom, var(--primary-accent-color), var(--hover-purple, #818cf8));
   border-radius: 2px 0 0 2px;
 }
 
@@ -532,7 +537,7 @@ section {
 .site-footer {
   padding: clamp(3rem, 6vw, 4rem) 5%;
   margin-top: clamp(3rem, 8vw, 5rem);
-  background-color: #100b38;
+  background-color: var(--card-bg-color);
   border-top: 1px solid var(--border-color);
 }
 
@@ -709,9 +714,9 @@ section {
   }
   
   .navbar-links a:hover {
-    background-color: rgba(74, 144, 226, 0.1);
-    color: var(--primary-accent-color);
-  }
+  background-color: rgba(99, 102, 241, 0.1);
+  color: var(--primary-accent-color);
+}
   
   .navbar-auth {
     z-index: 1001;
@@ -1002,7 +1007,7 @@ body.menu-open {
 .previous-events {
   padding: clamp(3rem, 8vw, 5rem) 0;
   border-top: 1px solid var(--border-color);
-  background: linear-gradient(135deg, rgba(16, 11, 56, 0.8), rgba(5, 2, 46, 0.9));
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(10, 10, 15, 0.9));
 }
 
 .previous-event-card {
@@ -1076,13 +1081,13 @@ body.menu-open {
   padding: 1rem 2rem;
   font-size: 1.1rem;
   border-radius: 30px;
-  box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
   transition: all 0.3s ease;
 }
 
 .view-more-container .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
 
 /* Responsive adjustments for previous events */

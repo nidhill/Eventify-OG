@@ -11,7 +11,7 @@
     background-color: var(--card-bg-color);
     padding: 1.5rem 2.5rem;
     border-radius: 16px;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .booking-container h1 {
@@ -25,7 +25,7 @@
     gap: 1.5rem;
     align-items: center;
     margin-bottom: 2.5rem;
-    background-color: #1a144a;
+    background-color: var(--card-bg-color);
     padding: 1.5rem;
     border-radius: 12px;
 }
@@ -92,8 +92,8 @@
     padding: 0.75rem;
     font-size: 1rem;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #2c2c41;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg, #1f2937);
     color: var(--text-primary-color);
     transition: border-color 0.3s ease;
 }
@@ -108,8 +108,8 @@
     padding: 0.75rem;
     font-size: 1rem;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #2c2c41;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg, #1f2937);
     color: var(--text-primary-color);
     transition: border-color 0.3s ease;
     resize: vertical;
@@ -130,17 +130,17 @@
 }
 
 .booking-form textarea::-webkit-scrollbar-track {
-    background: #1a144a;
+    background: var(--card-bg-color);
     border-radius: 4px;
 }
 
 .booking-form textarea::-webkit-scrollbar-thumb {
-    background: #4A90E2;
+    background: var(--primary-accent-color);
     border-radius: 4px;
 }
 
 .booking-form textarea::-webkit-scrollbar-thumb:hover {
-    background: #7bb3f0;
+    background: var(--hover-purple, #818cf8);
 }
 
 /* Price input group styling */
@@ -155,15 +155,15 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem;
-    background-color: rgba(74, 144, 226, 0.1);
-    border: 1px solid rgba(74, 144, 226, 0.2);
+    background-color: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.2);
     border-radius: 6px;
     transition: all 0.3s ease;
 }
 
 .free-entry-checkbox:hover {
-    background-color: rgba(74, 144, 226, 0.15);
-    border-color: rgba(74, 144, 226, 0.3);
+    background-color: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.3);
 }
 
 .free-entry-checkbox input[type="checkbox"] {
@@ -197,8 +197,8 @@
     padding: 0.75rem;
     font-size: 1rem;
     border-radius: 8px;
-    border: 1px solid #444;
-    background-color: #2c2c41;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg, #1f2937);
     color: var(--text-primary-color);
     transition: border-color 0.3s ease;
     cursor: pointer;
@@ -214,7 +214,7 @@
     padding: 1rem;
     font-size: 1.1rem;
     font-weight: 600;
-    background: linear-gradient(135deg, var(--primary-accent-color), #7bb3f0);
+    background: linear-gradient(135deg, var(--primary-accent-color), var(--hover-purple, #818cf8));
     border: none;
     border-radius: 8px;
     color: white;
@@ -225,7 +225,7 @@
 
 .booking-form .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
 }
 
 .coupon-section {
@@ -252,8 +252,8 @@
     flex: 1;
     padding: 0.75rem 1rem;
     border-radius: 8px;
-    border: 2px solid #444;
-    background-color: #2c2c41;
+    border: 2px solid var(--border-color);
+    background-color: var(--input-bg, #1f2937);
     color: var(--text-primary-color);
     font-size: 1rem;
     transition: all 0.3s ease;
@@ -313,9 +313,9 @@
 .price-details {
     margin: 2rem 0;
     padding: 1.5rem;
-    background-color: #1a144a;
+    background-color: var(--card-bg-color);
     border-radius: 12px;
-    border: 1px solid #444;
+    border: 1px solid var(--border-color);
 }
 
 .price-breakdown {
@@ -334,7 +334,7 @@
     color: var(--primary-accent-color);
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 1px solid #444;
+    border-top: 1px solid var(--border-color);
 }
 
 #discount-line {

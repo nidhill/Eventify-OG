@@ -27,7 +27,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(5, 2, 46, 0.7); /* Dark overlay */
+    background-color: rgba(10, 10, 15, 0.7); /* Dark overlay */
 }
 
 .hero-content {
@@ -65,7 +65,7 @@
 .mission-item {
     text-align: center;
     padding: 2rem;
-    background-color: #1a144a;
+    background-color: var(--card-bg-color);
     border-radius: 12px;
 }
 

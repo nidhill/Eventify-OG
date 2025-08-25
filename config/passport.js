@@ -15,7 +15,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       // Use env var first, otherwise default to production Render URL
-      callbackURL: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/userauth/home"
+      callbackURL: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
