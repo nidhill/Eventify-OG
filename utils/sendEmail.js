@@ -43,7 +43,7 @@ export const sendWelcomeEmail = async (options) => {
             </p>
 
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:5000/userauth/home" 
+              <a href="https://eventify-og-production.up.railway.app/events" 
                  style="background-color: #0056b3; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 16px;">
                 Explore Events
               </a>
@@ -186,7 +186,7 @@ export const sendUnbanEmail = async (options) => {
             </ul>
 
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:5000/userauth/home" 
+              <a href="https://eventify-og-production.up.railway.app/events" 
                  style="background-color: #28a745; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 16px;">
                 Return to Eventify
               </a>
@@ -243,7 +243,7 @@ export const sendTicketEmail = async (options) => {
             </div>
 
             <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:5000/userauth/home" 
+              <a href="https://eventify-og-production.up.railway.app/events" 
                  style="background-color: #0056b3; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-size: 16px;">
                 View More Events
               </a>
