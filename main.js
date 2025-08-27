@@ -54,8 +54,6 @@ app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
 app.use('/admin', adminRouter); 
 
-
-
 // Google OAuth routes (root level) - only if credentials are available
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   console.log('Google OAuth credentials found, setting up routes...');
@@ -81,7 +79,6 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
       callbackUrl: process.env.CALLBACK_URL || "http://localhost:5000/auth/google/callback"
-
     });
   });
 } else {
