@@ -3,8 +3,14 @@ import dotenv from 'dotenv';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from '../models/userModel.js';
 import { sendWelcomeEmail } from '../utils/sendEmail.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables from Backend/.env
+dotenv.config({ path: path.join(__dirname, '..', 'Backend', '.env') });
 
 // Only set up Google OAuth if credentials are available
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
@@ -14,8 +20,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      // Use env var first, otherwise default to production Render URL
-      callbackURL: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/auth/google/callback"
+      // Use env var first, otherwise default to localhost for development
+      callbackURL: process.env.CALLBACK_URL || "http://localhost:5000/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -30,11 +36,24 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           return done(new Error('Email is required for Google OAuth'), null);
         }
 
-        // 1. Check if Google user already exists
-        let existingUser = await User.findOne({ googleId: profile.id });
+        // 1. Check if Google user already exists (by googleId or email)
+        let existingUser = await User.findOne({ 
+          $or: [
+            { googleId: profile.id },
+            { email: profile.emails[0].value }
+          ]
+        });
 
         if (existingUser) {
-          console.log('Existing Google user found:', existingUser.username, 'isAdmin:', existingUser.isAdmin);
+          console.log('Existing user found:', existingUser.username, 'isAdmin:', existingUser.isAdmin);
+          
+          // If user exists but doesn't have googleId, update it
+          if (!existingUser.googleId) {
+            existingUser.googleId = profile.id;
+            await existingUser.save();
+            console.log('Updated existing user with Google ID:', existingUser.username);
+          }
+          
           // Ensure admin privileges for your email
           if (profile.emails[0].value === 'hynidhil@gmail.com' && !existingUser.isAdmin) {
             existingUser.isAdmin = true;
@@ -62,7 +81,6 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             name: profile.displayName, // Add the required name field
             username: finalUsername,
             email: profile.emails[0].value,
-            password: '',
             usertype: 'attendee', // Default value, user can change later
             avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck',
             isVerified: true,

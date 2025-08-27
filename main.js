@@ -12,11 +12,12 @@ import passport from 'passport';
 import './config/passport.js';
 import methodOverride from 'method-override';
 
-dotenv.config() 
-const app = express()
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Load environment variables from Backend/.env
+dotenv.config({ path: path.join(__dirname, 'Backend', '.env') }) 
+const app = express()
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -79,7 +80,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       status: 'Google OAuth is configured',
       clientId: process.env.GOOGLE_CLIENT_ID ? 'Present' : 'Missing',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing',
-      callbackUrl: process.env.CALLBACK_URL || "https://eventify-og-production.up.railway.app/auth/google/callback"
+      callbackUrl: process.env.CALLBACK_URL || "http://localhost:5000/auth/google/callback"
 
     });
   });
