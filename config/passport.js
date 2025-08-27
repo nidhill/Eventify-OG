@@ -48,18 +48,27 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           console.log('Creating new Google user...');
           const isAdmin = profile.emails[0].value === 'hynidhil@gmail.com'; // Give admin to your email
           
-          try {
-            existingUser = await User.create({
-              googleId: profile.id,
-              username: profile.displayName,
-              email: profile.emails[0].value,
-              password: '',
-              usertype: 'attendee', // Default value, user can change later
-              avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck',
-              isVerified: true,
-              isAdmin: isAdmin,
-              hasChosenUserType: false // User hasn't chosen their type yet
-            });
+                  try {
+          // Generate a valid username from displayName (remove spaces, special chars)
+          const validUsername = profile.displayName
+            .replace(/[^a-zA-Z0-9]/g, '') // Remove all non-alphanumeric characters
+            .toLowerCase(); // Convert to lowercase
+          
+          // Ensure username is at least 3 characters
+          const finalUsername = validUsername.length >= 3 ? validUsername : validUsername + '123';
+          
+          existingUser = await User.create({
+            googleId: profile.id,
+            name: profile.displayName, // Add the required name field
+            username: finalUsername,
+            email: profile.emails[0].value,
+            password: '',
+            usertype: 'attendee', // Default value, user can change later
+            avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck',
+            isVerified: true,
+            isAdmin: isAdmin,
+            hasChosenUserType: false // User hasn't chosen their type yet
+          });
             console.log('New Google user created successfully:', existingUser.username, 'isAdmin:', isAdmin);
           } catch (createError) {
             console.error('Error creating user:', createError);

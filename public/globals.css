@@ -1,6 +1,13 @@
 @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
 
 /* ======================================= */
+/* SMOOTH SCROLLING                        */
+/* ======================================= */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ======================================= */
 /* LOADER / PRELOADER STYLES             */
 /* ======================================= */
 
