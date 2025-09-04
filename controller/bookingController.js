@@ -128,14 +128,13 @@ export const confirmBooking = async (req, res) => {
         }
 
         // Send confirmation email to user
-        try {
-            console.log('Sending confirmation email to user:', req.user.email);
-            await sendTicketEmail({
+        // Send email asynchronously
+            sendTicketEmail({
                 email: req.user.email,
                 event: booking.eventId,
                 booking: booking
             });
-            console.log('✅ Confirmation email sent successfully to:', req.user.email);
+        }).then(() => {n            console.log('✅ Confirmation email sent successfully to:', req.user.email);
         } catch (emailError) {
             console.error('❌ Failed to send confirmation email:', emailError);
             console.error('Email error details:', {

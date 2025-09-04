@@ -96,7 +96,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
         // --- Send welcome email ---
         try {
-          await sendWelcomeEmail({
+          sendWelcomeEmail({
             email: existingUser.email,
             name: existingUser.username
           });
