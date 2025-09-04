@@ -16,7 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env
-dotenv.config() 
+dotenv.config({ override: true }) 
 const app = express()
 
 app.set('view engine', 'ejs');
