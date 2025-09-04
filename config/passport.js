@@ -21,7 +21,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       // Use env var first, otherwise default to localhost for development
-             callbackURL: process.env.CALLBACK_URL || "http://localhost:5000/auth/google/callback"
+      callbackURL: process.env.CALLBACK_URL || "http://localhost:5000/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -67,26 +67,26 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           console.log('Creating new Google user...');
           const isAdmin = profile.emails[0].value === 'hynidhil@gmail.com'; // Give admin to your email
           
-                  try {
-          // Generate a valid username from displayName (remove spaces, special chars)
-          const validUsername = profile.displayName
-            .replace(/[^a-zA-Z0-9]/g, '') // Remove all non-alphanumeric characters
-            .toLowerCase(); // Convert to lowercase
-          
-          // Ensure username is at least 3 characters
-          const finalUsername = validUsername.length >= 3 ? validUsername : validUsername + '123';
-          
-          existingUser = await User.create({
-            googleId: profile.id,
-            name: profile.displayName, // Add the required name field
-            username: finalUsername,
-            email: profile.emails[0].value,
-            usertype: 'attendee', // Default value, user can change later
-            avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck',
-            isVerified: true,
-            isAdmin: isAdmin,
-            hasChosenUserType: false // User hasn't chosen their type yet
-          });
+          try {
+            // Generate a valid username from displayName (remove spaces, special chars)
+            const validUsername = profile.displayName
+              .replace(/[^a-zA-Z0-9]/g, '') // Remove all non-alphanumeric characters
+              .toLowerCase(); // Convert to lowercase
+            
+            // Ensure username is at least 3 characters
+            const finalUsername = validUsername.length >= 3 ? validUsername : validUsername + '123';
+            
+            existingUser = await User.create({
+              googleId: profile.id,
+              name: profile.displayName, // Add the required name field
+              username: finalUsername,
+              email: profile.emails[0].value,
+              usertype: 'attendee', // Default value, user can change later
+              avatar: 'https://avataaars.io/?avatarStyle=Circle&topType=Hat&clotheType=ShirtCrewNeck',
+              isVerified: true,
+              isAdmin: isAdmin,
+              hasChosenUserType: false // User hasn't chosen their type yet
+            });
             console.log('New Google user created successfully:', existingUser.username, 'isAdmin:', isAdmin);
           } catch (createError) {
             console.error('Error creating user:', createError);
@@ -94,21 +94,15 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           }
         }
 
-        // --- Send welcome email ---
-        try {
-          sendWelcomeEmail({
-            email: existingUser.email,
-            name: existingUser.username
-          });
+        // --- Send welcome email asynchronously (don't wait) ---
+        sendWelcomeEmail({
+          email: existingUser.email,
+          name: existingUser.username
+        }).then(() => {
           console.log('✅ Welcome email sent successfully to:', existingUser.email);
-        } catch (emailError) {
-          console.error("❌ Failed to send welcome email to Google user, but user was created:", emailError);
-          console.error('Email error details:', {
-            message: emailError.message,
-            code: emailError.code,
-            response: emailError.response
-          });
-        }
+        }).catch((emailError) => {
+          console.error("❌ Failed to send welcome email to Google user:", emailError);
+        });
 
         // 3. Pass user to session
         if (!existingUser || !existingUser._id) {

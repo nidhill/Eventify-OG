@@ -127,23 +127,16 @@ export const confirmBooking = async (req, res) => {
             return res.status(404).send('Event not found for this booking');
         }
 
-        // Send confirmation email to user
-        // Send email asynchronously
-            sendTicketEmail({
-                email: req.user.email,
-                event: booking.eventId,
-                booking: booking
-            });
-        }).then(() => {n            console.log('✅ Confirmation email sent successfully to:', req.user.email);
-        } catch (emailError) {
+        // Send confirmation email asynchronously (don't wait)
+        sendTicketEmail({
+            email: req.user.email,
+            event: booking.eventId,
+            booking: booking
+        }).then(() => {
+            console.log('✅ Confirmation email sent successfully to:', req.user.email);
+        }).catch((emailError) => {
             console.error('❌ Failed to send confirmation email:', emailError);
-            console.error('Email error details:', {
-                message: emailError.message,
-                code: emailError.code,
-                response: emailError.response
-            });
-            // Continue even if email fails - booking is still valid
-        }
+        });
 
         console.log('Redirecting to ticket page');
 
