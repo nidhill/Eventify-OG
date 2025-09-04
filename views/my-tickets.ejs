@@ -54,12 +54,16 @@
                                     <div class="detail-item">
                                         <i class="fas fa-calendar"></i>
                                         <span>
-                                            <%= booking.eventId ? new Date(booking.eventId.date).toLocaleDateString('en-US', {
-                                                weekday: 'long',
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                            }) : 'Date not available' %>
+                                            <% if (booking.eventId && booking.eventId.date) { %>
+                                                <%= new Date(booking.eventId.date).toLocaleDateString('en-US', {
+                                                    weekday: 'long',
+                                                    year: 'numeric',
+                                                    month: 'long',
+                                                    day: 'numeric'
+                                                }) %>
+                                            <% } else { %>
+                                                Date not available
+                                            <% } %>
                                         </span>
                                     </div>
                                     
