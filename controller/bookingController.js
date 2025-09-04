@@ -185,3 +185,28 @@ export const showTicket = async (req, res) => {
         res.status(500).send('Something went wrong! Please try again.');
     }
 };
+
+// ഉപയോക്താവിന്റെ എല്ലാ ടിക്കറ്റുകളും കാണിക്കാൻ
+export const showUserTickets = async (req, res) => {
+    try {
+        console.log('Fetching tickets for user:', req.user._id);
+
+        const bookings = await Booking.find({ 
+            userId: req.user._id,
+            status: 'Completed'
+        })
+        .populate('eventId', 'title date location price image')
+        .sort({ bookingDate: -1 }); // Latest bookings first
+
+        console.log('Found bookings:', bookings.length);
+
+        res.render('my-tickets', { 
+            bookings: bookings,
+            user: req.user 
+        });
+
+    } catch (error) {
+        console.error("Error fetching user tickets:", error);
+        res.status(500).send('Something went wrong! Please try again.');
+    }
+};
