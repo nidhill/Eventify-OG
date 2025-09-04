@@ -2,7 +2,7 @@
 /* MY TICKETS PAGE - HOME PAGE STYLE      */
 /* ======================================= */
 
-/* Override any conflicting styles and ensure home page styling */
+/* Ensure proper styling with home page */
 .main-content {
   width: 90%;
   max-width: 1280px;
@@ -10,7 +10,7 @@
   padding: 0 1rem;
 }
 
-/* Use home page section header styling */
+/* Use exact same styling as home page section headers */
 .page-header {
   text-align: center;
   margin-bottom: clamp(2rem, 5vw, 3rem);
