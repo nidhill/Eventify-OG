@@ -544,42 +544,78 @@ section {
 .footer-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(clamp(200px, 25vw, 250px), 1fr));
-  gap: clamp(1.5rem, 3vw, 2rem);
+  gap: clamp(2rem, 4vw, 3rem);
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
   padding-bottom: clamp(2rem, 5vw, 3rem);
+  align-items: start;
 }
 
 .footer-grid h4 {
   font-size: clamp(1.1rem, 3vw, 1.25rem);
   margin-bottom: clamp(1rem, 3vw, 1.5rem);
   color: var(--text-primary-color);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .footer-links ul li {
   margin-bottom: clamp(0.75rem, 2vw, 1rem);
+  transition: transform 0.2s ease;
 }
+
+.footer-links ul li:hover {
+  transform: translateX(4px);
+}
+
 .footer-links a {
   color: var(--text-secondary-color);
   font-size: clamp(0.9rem, 2.5vw, 1rem);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  display: block;
 }
+
 .footer-links a:hover {
-  color: var(--text-primary-color);
+  color: var(--primary-accent-color);
+}
+
+.footer-contact ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .footer-contact ul li {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     margin-bottom: clamp(0.75rem, 2vw, 1rem);
     color: var(--text-secondary-color);
     font-size: clamp(0.9rem, 2.5vw, 1rem);
+    transition: transform 0.2s ease;
 }
+
+.footer-contact ul li:hover {
+    transform: translateX(4px);
+}
+
 .footer-contact img {
     width: clamp(18px, 3vw, 20px);
     height: clamp(18px, 3vw, 20px);
     filter: invert(70%);
+    transition: filter 0.3s ease;
+}
+
+.footer-contact ul li:hover img {
+    filter: invert(100%);
 }
 
 .footer-copyright {
@@ -589,6 +625,14 @@ section {
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary-color);
   font-size: clamp(0.9rem, 2.5vw, 1rem);
+  opacity: 0.8;
+}
+
+.footer-about h4 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: var(--primary-accent-color);
+  margin-bottom: 1rem;
 }
 
 /* ======================================= */
