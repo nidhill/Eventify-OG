@@ -10,7 +10,14 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from .env
 dotenv.config({ override: true });
 
-// Create transporter with better configuration
+// Debug environment variables
+console.log('🔍 Email Configuration Debug:');
+console.log('EMAIL_USER:', process.env.EMAIL_USER || 'NOT SET');
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'SET' : 'NOT SET');
+console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
+console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET');
+
+// Create transporter with better configuration for Railway
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -21,27 +28,34 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASS || 'xtwc aosx kaip qhmg',
     },
     // Add timeout and retry settings
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 10000,   // 10 seconds
-    socketTimeout: 30000,     // 30 seconds
+    connectionTimeout: 60000, // 60 seconds for Railway
+    greetingTimeout: 30000,   // 30 seconds for Railway
+    socketTimeout: 60000,     // 60 seconds for Railway
     // Add TLS options
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3'
     },
     // Add pool configuration for better reliability
     pool: true,
-    maxConnections: 5,
-    maxMessages: 100,
-    rateDelta: 20000,
-    rateLimit: 5
+    maxConnections: 3, // Reduced for Railway
+    maxMessages: 50,   // Reduced for Railway
+    rateDelta: 30000,  // 30 seconds
+    rateLimit: 3       // Reduced for Railway
 });
 
 // Verify transporter configuration on startup
 transporter.verify((error, success) => {
     if (error) {
         console.error('❌ Email transporter verification failed:', error);
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response
+        });
     } else {
         console.log('✅ Email transporter is ready to send messages');
+        console.log('📧 Email system initialized successfully');
     }
 });
 

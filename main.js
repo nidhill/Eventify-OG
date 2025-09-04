@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 import passport from 'passport';
 import './config/passport.js';
 import methodOverride from 'method-override';
+import { testEmailOnStartup } from './email-test.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +53,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // --- ROUTES ---
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        email_user: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
+        email_pass: process.env.EMAIL_PASS ? 'SET' : 'NOT SET',
+        environment: process.env.NODE_ENV || 'development'
+    });
+});
+
 app.use('/userauth', authRouter);
 app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
@@ -147,6 +159,14 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
+    
+    // Test email system on startup
+    console.log('🔍 Testing email system on server startup...');
+    try {
+        await testEmailOnStartup();
+    } catch (error) {
+        console.error('❌ Email system startup test failed:', error);
+    }
 });
