@@ -239,7 +239,7 @@ export const downloadTicket = async (req, res) => {
             return res.status(404).send('Event not found for this booking');
         }
 
-        // Generate PDF content (simple HTML to PDF conversion)
+        // Generate attractive ticket with barcode
         const ticketHtml = `
         <!DOCTYPE html>
         <html>
@@ -247,38 +247,259 @@ export const downloadTicket = async (req, res) => {
             <meta charset="UTF-8">
             <title>Event Ticket - ${booking.eventId.title}</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .ticket { border: 2px solid #333; padding: 20px; max-width: 600px; margin: 0 auto; }
-                .header { text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px; }
-                .event-title { font-size: 24px; font-weight: bold; color: #333; }
-                .details { margin: 10px 0; }
-                .label { font-weight: bold; color: #666; }
-                .value { margin-left: 10px; }
-                .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+                
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                
+                body { 
+                    font-family: 'Poppins', Arial, sans-serif; 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                }
+                
+                .ticket-container {
+                    background: white;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                    overflow: hidden;
+                    max-width: 400px;
+                    width: 100%;
+                    position: relative;
+                }
+                
+                .ticket-header {
+                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                    color: white;
+                    padding: 30px 20px;
+                    text-align: center;
+                    position: relative;
+                }
+                
+                .ticket-header::before {
+                    content: '';
+                    position: absolute;
+                    bottom: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0;
+                    height: 0;
+                    border-left: 10px solid transparent;
+                    border-right: 10px solid transparent;
+                    border-top: 10px solid #8b5cf6;
+                }
+                
+                .brand-logo {
+                    font-size: 28px;
+                    font-weight: 800;
+                    margin-bottom: 10px;
+                    letter-spacing: 2px;
+                }
+                
+                .event-title {
+                    font-size: 20px;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                }
+                
+                .event-date {
+                    font-size: 14px;
+                    opacity: 0.9;
+                }
+                
+                .ticket-body {
+                    padding: 30px 20px;
+                }
+                
+                .ticket-info {
+                    display: grid;
+                    gap: 15px;
+                    margin-bottom: 25px;
+                }
+                
+                .info-row {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #f0f0f0;
+                }
+                
+                .info-label {
+                    font-weight: 500;
+                    color: #666;
+                    font-size: 14px;
+                }
+                
+                .info-value {
+                    font-weight: 600;
+                    color: #333;
+                    font-size: 14px;
+                    text-align: right;
+                }
+                
+                .price-highlight {
+                    background: linear-gradient(135deg, #10b981, #059669);
+                    color: white;
+                    padding: 15px;
+                    border-radius: 12px;
+                    text-align: center;
+                    margin: 20px 0;
+                }
+                
+                .price-amount {
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin-bottom: 5px;
+                }
+                
+                .price-label {
+                    font-size: 12px;
+                    opacity: 0.9;
+                }
+                
+                .barcode-section {
+                    text-align: center;
+                    margin: 25px 0;
+                    padding: 20px;
+                    background: #f8f9fa;
+                    border-radius: 12px;
+                }
+                
+                .barcode {
+                    font-family: 'Courier New', monospace;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #333;
+                    letter-spacing: 2px;
+                    margin: 10px 0;
+                    padding: 10px;
+                    background: white;
+                    border: 2px solid #e5e7eb;
+                    border-radius: 8px;
+                }
+                
+                .barcode-label {
+                    font-size: 12px;
+                    color: #666;
+                    margin-top: 10px;
+                }
+                
+                .ticket-footer {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    text-align: center;
+                    border-top: 1px solid #e5e7eb;
+                }
+                
+                .footer-text {
+                    font-size: 12px;
+                    color: #666;
+                    line-height: 1.5;
+                    margin-bottom: 10px;
+                }
+                
+                .copyright {
+                    font-size: 11px;
+                    color: #999;
+                }
+                
+                .status-badge {
+                    position: absolute;
+                    top: 15px;
+                    right: 15px;
+                    background: #10b981;
+                    color: white;
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .ticket-id {
+                    background: #f0f0f0;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    font-family: 'Courier New', monospace;
+                    font-size: 12px;
+                    color: #666;
+                    text-align: center;
+                    margin-top: 15px;
+                }
+                
+                @media print {
+                    body { background: white; }
+                    .ticket-container { box-shadow: none; }
+                }
             </style>
         </head>
         <body>
-            <div class="ticket">
-                <div class="header">
-                    <h1>EVENTIFY</h1>
+            <div class="ticket-container">
+                <div class="status-badge">Valid</div>
+                
+                <div class="ticket-header">
+                    <div class="brand-logo">EVENTIFY</div>
                     <div class="event-title">${booking.eventId.title}</div>
+                    <div class="event-date">${new Date(booking.eventId.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
                 </div>
                 
-                <div class="details">
-                    <div><span class="label">Date:</span><span class="value">${new Date(booking.eventId.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span></div>
-                    <div><span class="label">Location:</span><span class="value">${booking.eventId.location}</span></div>
-                    <div><span class="label">Customer Name:</span><span class="value">${booking.customerName}</span></div>
-                    <div><span class="label">Phone:</span><span class="value">${booking.customerPhone}</span></div>
-                    <div><span class="label">Quantity:</span><span class="value">${booking.quantity} ticket${booking.quantity > 1 ? 's' : ''}</span></div>
-                    <div><span class="label">Total Amount:</span><span class="value">₹${booking.totalAmount.toFixed(2)}</span></div>
-                    <div><span class="label">Booking ID:</span><span class="value">${booking._id}</span></div>
-                    <div><span class="label">Booking Date:</span><span class="value">${new Date(booking.bookingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></div>
-                    ${booking.couponApplied ? '<div><span class="label">Coupon:</span><span class="value">Applied</span></div>' : ''}
+                <div class="ticket-body">
+                    <div class="ticket-info">
+                        <div class="info-row">
+                            <span class="info-label">Location</span>
+                            <span class="info-value">${booking.eventId.location}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Customer</span>
+                            <span class="info-value">${booking.customerName}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Phone</span>
+                            <span class="info-value">${booking.customerPhone}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Quantity</span>
+                            <span class="info-value">${booking.quantity} ticket${booking.quantity > 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Booking Date</span>
+                            <span class="info-value">${new Date(booking.bookingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        ${booking.couponApplied ? `
+                        <div class="info-row">
+                            <span class="info-label">Coupon</span>
+                            <span class="info-value" style="color: #10b981; font-weight: 700;">Applied ✓</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="price-highlight">
+                        <div class="price-amount">₹${booking.totalAmount.toFixed(2)}</div>
+                        <div class="price-label">Total Amount</div>
+                    </div>
+                    
+                    <div class="barcode-section">
+                        <div class="barcode">${booking._id.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}</div>
+                        <div class="barcode-label">Scan this code at the venue</div>
+                    </div>
+                    
+                    <div class="ticket-id">
+                        Ticket ID: ${booking._id}
+                    </div>
                 </div>
                 
-                <div class="footer">
-                    <p>This is your official event ticket. Please bring this ticket to the event.</p>
-                    <p>© 2025 Eventify - All rights reserved</p>
+                <div class="ticket-footer">
+                    <div class="footer-text">
+                        <strong>Important:</strong> Please bring this ticket to the event. This is your official entry pass.
+                    </div>
+                    <div class="copyright">
+                        © 2025 Eventify - All rights reserved
+                    </div>
                 </div>
             </div>
         </body>
