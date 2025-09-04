@@ -100,9 +100,14 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
             email: existingUser.email,
             name: existingUser.username
           });
-          console.log('Welcome email sent successfully to:', existingUser.email);
+          console.log('✅ Welcome email sent successfully to:', existingUser.email);
         } catch (emailError) {
-          console.error("Failed to send welcome email to Google user, but user was created:", emailError);
+          console.error("❌ Failed to send welcome email to Google user, but user was created:", emailError);
+          console.error('Email error details:', {
+            message: emailError.message,
+            code: emailError.code,
+            response: emailError.response
+          });
         }
 
         // 3. Pass user to session

@@ -135,10 +135,15 @@ export const confirmBooking = async (req, res) => {
                 event: booking.eventId,
                 booking: booking
             });
-            console.log('Confirmation email sent successfully to:', req.user.email);
+            console.log('✅ Confirmation email sent successfully to:', req.user.email);
         } catch (emailError) {
-            console.error('Failed to send confirmation email:', emailError);
-            // Continue even if email fails
+            console.error('❌ Failed to send confirmation email:', emailError);
+            console.error('Email error details:', {
+                message: emailError.message,
+                code: emailError.code,
+                response: emailError.response
+            });
+            // Continue even if email fails - booking is still valid
         }
 
         console.log('Redirecting to ticket page');

@@ -10,16 +10,33 @@ const __dirname = path.dirname(__filename);
 // Load environment variables from .env
 dotenv.config({ override: true });
 
+// Create transporter with better configuration
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
     // Add timeout and retry settings
-    connectionTimeout: 10000, // 10 seconds
-    greetingTimeout: 5000,    // 5 seconds
-    socketTimeout: 10000,     // 10 seconds
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 10000,   // 10 seconds
+    socketTimeout: 30000,     // 30 seconds
+    // Add TLS options
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+// Verify transporter configuration on startup
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('❌ Email transporter verification failed:', error);
+    } else {
+        console.log('✅ Email transporter is ready to send messages');
+    }
 });
 
 // Welcome Email
@@ -72,10 +89,18 @@ export const sendWelcomeEmail = async (options) => {
 </table>
 `,
         };
-        await transporter.sendMail(mailOptions);
-        console.log('Welcome email sent successfully to:', options.email);
+        const result = await transporter.sendMail(mailOptions);
+        console.log('✅ Welcome email sent successfully to:', options.email);
+        console.log('Message ID:', result.messageId);
+        return result;
     } catch (error) {
-        console.error('Error sending welcome email:', error);
+        console.error('❌ Error sending welcome email:', error);
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response
+        });
+        throw error;
     }
 };
 
@@ -88,10 +113,18 @@ export const sendOtpEmail = async (options) => {
             subject: 'Your OTP for Eventify Verification',
             html: `<h2>Hello ${options.name},</h2><p>Your One-Time Password (OTP) for account verification is: <strong>${options.otp}</strong></p><p>This OTP is valid for 10 minutes.</p>`,
         };
-        await transporter.sendMail(mailOptions);
-        console.log('OTP email sent successfully to:', options.email);
+        const result = await transporter.sendMail(mailOptions);
+        console.log('✅ OTP email sent successfully to:', options.email);
+        console.log('Message ID:', result.messageId);
+        return result;
     } catch (error) {
-        console.error('Error sending OTP email:', error);
+        console.error('❌ Error sending OTP email:', error);
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response
+        });
+        throw error;
     }
 };
 
@@ -272,9 +305,17 @@ export const sendTicketEmail = async (options) => {
 </table>
 `,
         };
-        await transporter.sendMail(mailOptions);
-        console.log('Ticket email sent successfully to:', options.email);
+        const result = await transporter.sendMail(mailOptions);
+        console.log('✅ Ticket email sent successfully to:', options.email);
+        console.log('Message ID:', result.messageId);
+        return result;
     } catch (error) {
-        console.error('Error sending ticket email:', error);
+        console.error('❌ Error sending ticket email:', error);
+        console.error('Error details:', {
+            message: error.message,
+            code: error.code,
+            response: error.response
+        });
+        throw error;
     }
 };
