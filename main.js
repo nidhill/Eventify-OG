@@ -63,6 +63,31 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Email test endpoint
+app.post('/test-email', async (req, res) => {
+    try {
+        const { sendOtpEmail } = await import('./utils/sendEmail.js');
+        
+        const result = await sendOtpEmail({
+            email: 'hynidhil@gmail.com',
+            name: 'Test User',
+            otp: '123456'
+        });
+        
+        res.json({
+            success: true,
+            message: 'Email test completed',
+            result: result
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: 'Email test failed',
+            error: error.message
+        });
+    }
+});
+
 app.use('/userauth', authRouter);
 app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
