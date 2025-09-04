@@ -26,7 +26,12 @@ export const proceedToPayment = async (req, res) => {
             return res.status(400).send('Missing required fields');
         }
 
-        const event = await Event.findById(eventId);
+        const event = await Event.findById(eventId, {
+            title: 1,
+            price: 1,
+            date: 1,
+            location: 1
+        });
         if (!event) {
             console.error('Event not found for ID:', eventId);
             return res.status(404).send('Event not found');

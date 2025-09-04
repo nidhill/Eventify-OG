@@ -6,8 +6,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from Backend/.env
-dotenv.config({ path: path.join(__dirname, 'Backend', '.env') });
+// Load environment variables from .env
+dotenv.config();
 
 const connectTodbs = async() => {
     try {

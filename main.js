@@ -15,8 +15,8 @@ import methodOverride from 'method-override';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from Backend/.env
-dotenv.config({ path: path.join(__dirname, 'Backend', '.env') }) 
+// Load environment variables from .env
+dotenv.config() 
 const app = express()
 
 app.set('view engine', 'ejs');
@@ -40,8 +40,11 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: false,
-    maxAge: 24 * 60 * 60 * 1000
-  }
+    maxAge: 24 * 60 * 60 * 1000,
+    httpOnly: true
+  },
+  // Add session store for better performance (optional)
+  name: 'eventify.sid'
 }));
 
 // Passport middleware

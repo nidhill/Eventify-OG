@@ -7,8 +7,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from Backend/.env
-dotenv.config({ path: path.join(__dirname, '..', 'Backend', '.env') });
+// Load environment variables from .env
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -16,6 +16,10 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
+    // Add timeout and retry settings
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 5000,    // 5 seconds
+    socketTimeout: 10000,     // 10 seconds
 });
 
 // Welcome Email

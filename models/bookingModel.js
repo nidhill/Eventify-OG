@@ -42,4 +42,10 @@ const bookingSchema = new mongoose.Schema({
     }
 });
 
+// Add indexes for better performance
+bookingSchema.index({ userId: 1 });
+bookingSchema.index({ eventId: 1 });
+bookingSchema.index({ status: 1 });
+bookingSchema.index({ bookingDate: 1 });
+
 export default mongoose.model('Booking', bookingSchema);

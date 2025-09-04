@@ -24,4 +24,10 @@ const eventSchema = new mongoose.Schema({
   }]
 });
 
+// Add indexes for better performance
+eventSchema.index({ date: 1 });
+eventSchema.index({ category: 1 });
+eventSchema.index({ location: 1 });
+eventSchema.index({ createdBy: 1 });
+
 export default mongoose.model('Event', eventSchema);

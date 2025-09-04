@@ -212,23 +212,37 @@ export const showlogin = async (req,res)=>{
 
 export const home = async (req,res)=>{
   try {
-    const allEvents = await Event.find({});
+    // Optimize: Only fetch necessary fields and limit results
+    const allEvents = await Event.find({}, {
+      title: 1,
+      description: 1,
+      date: 1,
+      location: 1,
+      image: 1,
+      price: 1,
+      category: 1,
+      createdBy: 1
+    }).sort({ date: 1 }).limit(50); // Limit to 50 events for faster loading
     
     // Get current date for comparison
     const currentDate = new Date();
     
-    // Separate events into upcoming and previous
-    const upcomingEvents = allEvents.filter(event => {
-      if (!event.date) return false;
-      const eventDate = new Date(event.date);
-      return eventDate >= currentDate;
-    });
+    // Separate events into upcoming and previous (optimized)
+    const upcomingEvents = [];
+    const previousEvents = [];
     
-    const previousEvents = allEvents.filter(event => {
-      if (!event.date) return false;
+    for (const event of allEvents) {
+      if (!event.date) continue;
       const eventDate = new Date(event.date);
-      return eventDate < currentDate;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by most recent first
+      if (eventDate >= currentDate) {
+        upcomingEvents.push(event);
+      } else {
+        previousEvents.push(event);
+      }
+    }
+    
+    // Sort previous events by most recent first
+    previousEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
     
     // Check if user is a new Google OAuth user who needs to choose user type
     // For Google OAuth users, show the selection if they haven't explicitly chosen their type
