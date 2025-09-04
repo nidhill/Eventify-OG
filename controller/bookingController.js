@@ -239,7 +239,7 @@ export const downloadTicket = async (req, res) => {
             return res.status(404).send('Event not found for this booking');
         }
 
-        // Generate attractive ticket with barcode
+        // Generate modern split-design ticket with barcode
         const ticketHtml = `
         <!DOCTYPE html>
         <html>
@@ -247,13 +247,13 @@ export const downloadTicket = async (req, res) => {
             <meta charset="UTF-8">
             <title>Event Ticket - ${booking.eventId.title}</title>
             <style>
-                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
                 
                 * { margin: 0; padding: 0; box-sizing: border-box; }
                 
                 body { 
-                    font-family: 'Poppins', Arial, sans-serif; 
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    font-family: 'Inter', Arial, sans-serif; 
+                    background: #f5f5f5;
                     min-height: 100vh;
                     display: flex;
                     align-items: center;
@@ -263,244 +263,324 @@ export const downloadTicket = async (req, res) => {
                 
                 .ticket-container {
                     background: white;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                    border-radius: 15px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
                     overflow: hidden;
-                    max-width: 400px;
+                    max-width: 600px;
                     width: 100%;
                     position: relative;
+                    display: flex;
                 }
                 
-                .ticket-header {
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+                .ticket-left {
+                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
                     color: white;
-                    padding: 30px 20px;
-                    text-align: center;
+                    padding: 30px;
+                    flex: 1;
                     position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
                 }
                 
-                .ticket-header::before {
+                .ticket-left::before {
                     content: '';
                     position: absolute;
-                    bottom: -10px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    width: 0;
-                    height: 0;
-                    border-left: 10px solid transparent;
-                    border-right: 10px solid transparent;
-                    border-top: 10px solid #8b5cf6;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+                    opacity: 0.3;
                 }
                 
-                .brand-logo {
-                    font-size: 28px;
-                    font-weight: 800;
-                    margin-bottom: 10px;
-                    letter-spacing: 2px;
+                .event-badge {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+                    color: white;
+                    padding: 8px 15px;
+                    border-radius: 20px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    transform: rotate(15deg);
+                    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
                 }
                 
                 .event-title {
-                    font-size: 20px;
-                    font-weight: 600;
-                    margin-bottom: 5px;
+                    font-size: 24px;
+                    font-weight: 800;
+                    line-height: 1.2;
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 }
                 
-                .event-date {
+                .event-subtitle {
                     font-size: 14px;
-                    opacity: 0.9;
+                    opacity: 0.8;
+                    margin-bottom: 20px;
+                    font-weight: 400;
                 }
                 
-                .ticket-body {
-                    padding: 30px 20px;
+                .event-details {
+                    margin-bottom: 20px;
                 }
                 
-                .ticket-info {
-                    display: grid;
-                    gap: 15px;
-                    margin-bottom: 25px;
-                }
-                
-                .info-row {
+                .detail-item {
                     display: flex;
-                    justify-content: space-between;
                     align-items: center;
-                    padding: 8px 0;
-                    border-bottom: 1px solid #f0f0f0;
+                    margin-bottom: 8px;
+                    font-size: 13px;
                 }
                 
-                .info-label {
-                    font-weight: 500;
-                    color: #666;
-                    font-size: 14px;
+                .detail-icon {
+                    width: 16px;
+                    height: 16px;
+                    margin-right: 10px;
+                    opacity: 0.7;
                 }
                 
-                .info-value {
-                    font-weight: 600;
-                    color: #333;
-                    font-size: 14px;
-                    text-align: right;
-                }
-                
-                .price-highlight {
-                    background: linear-gradient(135deg, #10b981, #059669);
-                    color: white;
+                .price-section {
+                    background: rgba(255, 255, 255, 0.1);
                     padding: 15px;
-                    border-radius: 12px;
+                    border-radius: 10px;
                     text-align: center;
-                    margin: 20px 0;
+                    backdrop-filter: blur(10px);
                 }
                 
                 .price-amount {
-                    font-size: 24px;
-                    font-weight: 700;
+                    font-size: 28px;
+                    font-weight: 900;
                     margin-bottom: 5px;
                 }
                 
                 .price-label {
                     font-size: 12px;
-                    opacity: 0.9;
+                    opacity: 0.8;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                
+                .ticket-right {
+                    background: #fafafa;
+                    padding: 30px;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    position: relative;
+                }
+                
+                .ticket-number {
+                    background: #e74c3c;
+                    color: white;
+                    padding: 8px 15px;
+                    border-radius: 5px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                
+                .seat-info {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                
+                .seat-label {
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 5px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                
+                .seat-number {
+                    font-size: 32px;
+                    font-weight: 900;
+                    color: #2c3e50;
+                    margin-bottom: 5px;
+                }
+                
+                .customer-info {
+                    margin-bottom: 20px;
+                }
+                
+                .customer-name {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    margin-bottom: 5px;
+                }
+                
+                .customer-phone {
+                    font-size: 14px;
+                    color: #666;
                 }
                 
                 .barcode-section {
                     text-align: center;
-                    margin: 25px 0;
-                    padding: 20px;
-                    background: #f8f9fa;
-                    border-radius: 12px;
+                    margin-top: auto;
                 }
                 
                 .barcode {
                     font-family: 'Courier New', monospace;
-                    font-size: 16px;
+                    font-size: 18px;
                     font-weight: bold;
                     color: #333;
-                    letter-spacing: 2px;
-                    margin: 10px 0;
-                    padding: 10px;
+                    letter-spacing: 3px;
+                    margin: 15px 0;
+                    padding: 15px;
                     background: white;
-                    border: 2px solid #e5e7eb;
+                    border: 2px solid #ddd;
                     border-radius: 8px;
-                }
-                
-                .barcode-label {
-                    font-size: 12px;
-                    color: #666;
-                    margin-top: 10px;
-                }
-                
-                .ticket-footer {
-                    background: #f8f9fa;
-                    padding: 20px;
                     text-align: center;
-                    border-top: 1px solid #e5e7eb;
                 }
                 
-                .footer-text {
-                    font-size: 12px;
-                    color: #666;
-                    line-height: 1.5;
-                    margin-bottom: 10px;
-                }
-                
-                .copyright {
-                    font-size: 11px;
-                    color: #999;
-                }
-                
-                .status-badge {
-                    position: absolute;
-                    top: 15px;
-                    right: 15px;
-                    background: #10b981;
-                    color: white;
-                    padding: 5px 12px;
-                    border-radius: 20px;
-                    font-size: 11px;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-                
-                .ticket-id {
-                    background: #f0f0f0;
-                    padding: 8px 12px;
-                    border-radius: 8px;
+                .barcode-number {
                     font-family: 'Courier New', monospace;
                     font-size: 12px;
                     color: #666;
+                    margin-top: 5px;
+                    letter-spacing: 1px;
+                }
+                
+                .ticket-footer {
+                    background: #2c3e50;
+                    color: white;
+                    padding: 15px;
                     text-align: center;
-                    margin-top: 15px;
+                    font-size: 11px;
+                    margin-top: 20px;
+                    border-radius: 0 0 15px 15px;
+                }
+                
+                .footer-text {
+                    margin-bottom: 5px;
+                    opacity: 0.9;
+                }
+                
+                .copyright {
+                    opacity: 0.7;
+                }
+                
+                .ticket-stub {
+                    background: #34495e;
+                    color: white;
+                    padding: 15px;
+                    text-align: center;
+                    font-size: 12px;
+                    border-top: 2px dashed #ecf0f1;
+                }
+                
+                .stub-title {
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+                
+                .stub-details {
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 10px;
+                }
+                
+                .stub-item {
+                    font-size: 11px;
+                    opacity: 0.8;
                 }
                 
                 @media print {
                     body { background: white; }
                     .ticket-container { box-shadow: none; }
                 }
+                
+                @media (max-width: 768px) {
+                    .ticket-container {
+                        flex-direction: column;
+                        max-width: 400px;
+                    }
+                    
+                    .ticket-left, .ticket-right {
+                        padding: 20px;
+                    }
+                }
             </style>
         </head>
         <body>
             <div class="ticket-container">
-                <div class="status-badge">Valid</div>
-                
-                <div class="ticket-header">
-                    <div class="brand-logo">EVENTIFY</div>
-                    <div class="event-title">${booking.eventId.title}</div>
-                    <div class="event-date">${new Date(booking.eventId.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
-                </div>
-                
-                <div class="ticket-body">
-                    <div class="ticket-info">
-                        <div class="info-row">
-                            <span class="info-label">Location</span>
-                            <span class="info-value">${booking.eventId.location}</span>
+                <div class="ticket-left">
+                    <div class="event-badge">Special Event</div>
+                    
+                    <div>
+                        <div class="event-title">${booking.eventId.title}</div>
+                        <div class="event-subtitle">An Amazing Event Experience</div>
+                        
+                        <div class="event-details">
+                            <div class="detail-item">
+                                <span class="detail-icon">📅</span>
+                                <span>${new Date(booking.eventId.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">🕐</span>
+                                <span>7:00 PM - 11:00 PM</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-icon">📍</span>
+                                <span>${booking.eventId.location}</span>
+                            </div>
                         </div>
-                        <div class="info-row">
-                            <span class="info-label">Customer</span>
-                            <span class="info-value">${booking.customerName}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Phone</span>
-                            <span class="info-value">${booking.customerPhone}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Quantity</span>
-                            <span class="info-value">${booking.quantity} ticket${booking.quantity > 1 ? 's' : ''}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">Booking Date</span>
-                            <span class="info-value">${new Date(booking.bookingDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                        ${booking.couponApplied ? `
-                        <div class="info-row">
-                            <span class="info-label">Coupon</span>
-                            <span class="info-value" style="color: #10b981; font-weight: 700;">Applied ✓</span>
-                        </div>
-                        ` : ''}
                     </div>
                     
-                    <div class="price-highlight">
+                    <div class="price-section">
                         <div class="price-amount">₹${booking.totalAmount.toFixed(2)}</div>
                         <div class="price-label">Total Amount</div>
+                    </div>
+                </div>
+                
+                <div class="ticket-right">
+                    <div class="ticket-number">Admin One - No. ${booking._id.toString().slice(-6)}</div>
+                    
+                    <div class="seat-info">
+                        <div class="seat-label">Seat</div>
+                        <div class="seat-number">${booking.quantity > 1 ? `${booking.quantity} Tickets` : 'A1'}</div>
+                        <div class="seat-label">${new Date(booking.eventId.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }).toUpperCase()}</div>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <div class="customer-name">${booking.customerName}</div>
+                        <div class="customer-phone">${booking.customerPhone}</div>
                     </div>
                     
                     <div class="barcode-section">
                         <div class="barcode">${booking._id.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}</div>
-                        <div class="barcode-label">Scan this code at the venue</div>
-                    </div>
-                    
-                    <div class="ticket-id">
-                        Ticket ID: ${booking._id}
+                        <div class="barcode-number">${booking._id.toString().replace(/[^a-zA-Z0-9]/g, '').toUpperCase()}</div>
                     </div>
                 </div>
-                
-                <div class="ticket-footer">
-                    <div class="footer-text">
-                        <strong>Important:</strong> Please bring this ticket to the event. This is your official entry pass.
-                    </div>
-                    <div class="copyright">
-                        © 2025 Eventify - All rights reserved
-                    </div>
+            </div>
+            
+            <div class="ticket-stub">
+                <div class="stub-title">Event Ticket Stub</div>
+                <div class="stub-details">
+                    <div class="stub-item">${booking.eventId.title}</div>
+                    <div class="stub-item">${new Date(booking.eventId.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                 </div>
+                <div class="stub-details">
+                    <div class="stub-item">${booking.customerName}</div>
+                    <div class="stub-item">₹${booking.totalAmount.toFixed(2)}</div>
+                </div>
+            </div>
+            
+            <div class="ticket-footer">
+                <div class="footer-text">This is your official event ticket. Please bring this ticket to the event.</div>
+                <div class="copyright">© 2025 Eventify - All rights reserved</div>
             </div>
         </body>
         </html>
