@@ -14,14 +14,13 @@
     <%- include('partials/header') %>
 
     <main class="main-content">
-        <div class="container">
-            <div class="page-header">
-                <h1 class="page-title">
-                    <i class="fas fa-ticket-alt"></i>
-                    My Tickets
-                </h1>
-                <p class="page-subtitle">View all your booked event tickets</p>
-            </div>
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-ticket-alt"></i>
+                My Tickets
+            </h1>
+            <p class="page-subtitle">View all your booked event tickets</p>
+        </div>
 
             <% if (bookings && bookings.length > 0) { %>
                 <div class="tickets-grid">
@@ -125,20 +124,19 @@
                         </div>
                     <% }); %>
                 </div>
-            <% } else { %>
-                <div class="no-tickets">
-                    <div class="no-tickets-icon">
-                        <i class="fas fa-ticket-alt"></i>
-                    </div>
-                    <h3>No Tickets Found</h3>
-                    <p>You haven't booked any events yet. Start exploring amazing events!</p>
-                    <a href="/events" class="btn btn-primary">
-                        <i class="fas fa-search"></i>
-                        Browse Events
-                    </a>
+        <% } else { %>
+            <div class="no-tickets">
+                <div class="no-tickets-icon">
+                    <i class="fas fa-ticket-alt"></i>
                 </div>
-            <% } %>
-        </div>
+                <h3>No Tickets Found</h3>
+                <p>You haven't booked any events yet. Start exploring amazing events!</p>
+                <a href="/events" class="btn btn-primary">
+                    <i class="fas fa-search"></i>
+                    Browse Events
+                </a>
+            </div>
+        <% } %>
     </main>
 
     <%- include('partials/footer') %>
