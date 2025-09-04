@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Tickets - Eventify</title>
-    <link rel="stylesheet" href="/globals.css">
-    <link rel="stylesheet" href="/home.css">
     <link rel="stylesheet" href="/myTickets.css">
 </head>
 <body>
@@ -118,6 +116,10 @@
                                     <i class="fas fa-eye"></i>
                                     View Ticket
                                 </a>
+                                <a href="/booking/download-ticket/<%= booking._id %>" class="btn btn-download" onclick="downloadTicket('<%= booking._id %>')">
+                                    <i class="fas fa-download"></i>
+                                    Download
+                                </a>
                             </div>
                         </div>
                     <% }); %>
@@ -140,7 +142,27 @@
     <%- include('partials/footer') %>
 
     <script>
-    
+        function downloadTicket(bookingId) {
+            // Show loading state
+            const downloadBtn = event.target.closest('.btn-download');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            downloadBtn.style.pointerEvents = 'none';
+            
+            // Create a temporary link to trigger download
+            const link = document.createElement('a');
+            link.href = `/booking/download-ticket/${bookingId}`;
+            link.download = `ticket-${bookingId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Reset button after a delay
+            setTimeout(() => {
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.style.pointerEvents = 'auto';
+            }, 2000);
+        }
     </script>
 </body>
 </html>

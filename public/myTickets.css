@@ -183,10 +183,12 @@
 .ticket-actions {
   padding: 0 clamp(1rem, 2.5vw, 1.25rem) clamp(1rem, 2.5vw, 1.25rem) clamp(1rem, 2.5vw, 1.25rem);
   margin-top: auto;
+  display: flex;
+  gap: 0.75rem;
 }
 
 .ticket-actions .btn {
-  width: 100%;
+  flex: 1;
   display: inline-block;
   text-align: center;
   background-color: #d9d9d9;
@@ -203,6 +205,21 @@
 
 .ticket-actions .btn:hover {
   background-color: var(--text-primary-color);
+  transform: translateY(-2px);
+}
+
+/* Download button specific styling */
+.btn-download {
+  background-color: var(--primary-accent-color) !important;
+  color: var(--text-primary-color) !important;
+  border: 2px solid var(--primary-accent-color) !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+}
+
+.btn-download:hover {
+  background-color: var(--hover-purple) !important;
+  border-color: var(--hover-purple) !important;
   transform: translateY(-2px);
 }
 
