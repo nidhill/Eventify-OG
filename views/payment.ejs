@@ -30,13 +30,15 @@
                 <div class="payment-form">
                     <h4>Enter Your Card Details</h4>
                     <p>(This is a demo and does not process real payments)</p>
-                    <form action="/booking/confirm" method="POST">
+                    <form action="/booking/confirm" method="POST" id="payment-form">
                         <% if (booking && booking._id) { %>
                             <input type="hidden" name="bookingId" value="<%= booking._id %>">
                         <% } else { %>
                             <input type="hidden" name="bookingId" value="">
                             <script>
                                 console.error('Booking ID not found in payment form');
+                                alert('Error: Booking information not found. Please try booking again.');
+                                window.location.href = '/events';
                             </script>
                         <% } %>
                         <div class="form-group">
@@ -177,8 +179,24 @@
         });
 
         // Reset timer on form submission
-        document.querySelector('form').addEventListener('submit', function() {
+        document.querySelector('form').addEventListener('submit', function(e) {
             clearInterval(timeoutInterval);
+            
+            // Validate booking ID exists
+            const bookingIdInput = document.querySelector('input[name="bookingId"]');
+            if (!bookingIdInput || !bookingIdInput.value) {
+                e.preventDefault();
+                alert('Error: Booking information not found. Please try booking again.');
+                window.location.href = '/events';
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('.btn-make-payment');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+            }
         });
 
 

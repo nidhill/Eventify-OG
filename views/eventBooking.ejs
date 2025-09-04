@@ -220,7 +220,7 @@
             <div class="booking-form-column">
                 <div class="booking-box">
                     <h3>Confirm Your Booking</h3>
-                    <form class="booking-form" action="/booking/proceed-to-payment" method="POST">
+                    <form class="booking-form" action="/booking/proceed-to-payment" method="POST" id="booking-form">
                         <input type="hidden" name="eventId" value="<%= event._id %>">
                         <input type="hidden" name="couponApplied" id="coupon-applied" value="false">
                         
@@ -374,6 +374,41 @@
 
         // Initialize the page
         calculateTotal();
+        
+        // Add form validation
+        document.getElementById('booking-form').addEventListener('submit', function(e) {
+            const customerName = document.getElementById('customer-name').value.trim();
+            const customerPhone = document.getElementById('customer-phone').value.trim();
+            const quantity = document.getElementById('ticket-quantity').value;
+            
+            if (!customerName) {
+                e.preventDefault();
+                alert('Please enter your full name.');
+                document.getElementById('customer-name').focus();
+                return false;
+            }
+            
+            if (!customerPhone || customerPhone.length !== 10 || !/^\d{10}$/.test(customerPhone)) {
+                e.preventDefault();
+                alert('Please enter a valid 10-digit phone number.');
+                document.getElementById('customer-phone').focus();
+                return false;
+            }
+            
+            if (!quantity || quantity < 1 || quantity > 10) {
+                e.preventDefault();
+                alert('Please enter a valid quantity (1-10).');
+                document.getElementById('ticket-quantity').focus();
+                return false;
+            }
+            
+            // Show loading state
+            const submitBtn = document.querySelector('.btn-confirm-booking');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Processing...';
+            }
+        });
     </script>
 
 </body>

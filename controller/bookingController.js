@@ -70,6 +70,22 @@ export const proceedToPayment = async (req, res) => {
 
     } catch (error) {
         console.error("Error proceeding to payment:", error);
+        console.error("Error details:", {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+        });
+        
+        // Check if it's a validation error
+        if (error.name === 'ValidationError') {
+            return res.status(400).send(`Validation Error: ${error.message}`);
+        }
+        
+        // Check if it's a MongoDB error
+        if (error.name === 'MongoError' || error.name === 'MongoServerError') {
+            return res.status(500).send('Database error occurred. Please try again.');
+        }
+        
         res.status(500).send('Something went wrong! Please try again.');
     }
 };
