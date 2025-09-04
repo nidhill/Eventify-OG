@@ -17,8 +17,8 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
+        pass: process.env.EMAIL_PASS || 'xtwc aosx kaip qhmg',
     },
     // Add timeout and retry settings
     connectionTimeout: 30000, // 30 seconds
@@ -27,7 +27,13 @@ const transporter = nodemailer.createTransport({
     // Add TLS options
     tls: {
         rejectUnauthorized: false
-    }
+    },
+    // Add pool configuration for better reliability
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    rateDelta: 20000,
+    rateLimit: 5
 });
 
 // Verify transporter configuration on startup
@@ -43,7 +49,7 @@ transporter.verify((error, success) => {
 export const sendWelcomeEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify <${process.env.EMAIL_USER}>`,
+            from: `Eventify <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
             to: options.email,
             subject: 'Welcome to Eventify!',
             html: `
@@ -108,10 +114,54 @@ export const sendWelcomeEmail = async (options) => {
 export const sendOtpEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify <${process.env.EMAIL_USER}>`,
+            from: `Eventify <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
             to: options.email,
             subject: 'Your OTP for Eventify Verification',
-            html: `<h2>Hello ${options.name},</h2><p>Your One-Time Password (OTP) for account verification is: <strong>${options.otp}</strong></p><p>This OTP is valid for 10 minutes.</p>`,
+            html: `
+<table width="100%" cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; background-color: #f8f9fa; padding: 30px;">
+  <tr>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <tr>
+          <td style="background-color: #6366f1; padding: 20px; text-align: center;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Email Verification</h1>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 30px;">
+            <p style="font-size: 18px; margin-bottom: 20px;">Hello ${options.name},</p>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              Thank you for signing up with Eventify! To complete your account verification, please use the One-Time Password (OTP) below:
+            </p>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <div style="background-color: #f8f9fa; border: 2px solid #6366f1; border-radius: 8px; padding: 20px; display: inline-block;">
+                <h2 style="color: #6366f1; margin: 0; font-size: 32px; letter-spacing: 5px; font-family: 'Courier New', monospace;">${options.otp}</h2>
+              </div>
+            </div>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              <strong>Important:</strong>
+            </p>
+            <ul style="font-size: 16px; color: #333; line-height: 1.6;">
+              <li>This OTP is valid for 10 minutes only</li>
+              <li>Do not share this OTP with anyone</li>
+              <li>If you didn't request this verification, please ignore this email</li>
+            </ul>
+
+            <p style="font-size: 16px; color: #333; line-height: 1.6;">
+              Once verified, you'll have full access to create and book events on our platform.
+            </p>
+
+            <p style="margin-top: 30px; font-size: 16px; color: #333;">Best regards,<br><strong>The Eventify Team</strong></p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+`,
         };
         const result = await transporter.sendMail(mailOptions);
         console.log('✅ OTP email sent successfully to:', options.email);
@@ -132,7 +182,7 @@ export const sendOtpEmail = async (options) => {
 export const sendBanEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
+            from: `Eventify Admin <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
             to: options.email,
             subject: 'Account Suspension Notice - Eventify',
             html: `
@@ -192,7 +242,7 @@ export const sendBanEmail = async (options) => {
 export const sendUnbanEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
+            from: `Eventify Admin <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
             to: options.email,
             subject: 'Account Restored - Eventify',
             html: `
@@ -259,7 +309,7 @@ export const sendUnbanEmail = async (options) => {
 export const sendTicketEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Tickets <${process.env.EMAIL_USER}>`,
+            from: `Eventify Tickets <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
             to: options.email,
             subject: `Your Ticket for ${options.event.title}`,
             html: `
