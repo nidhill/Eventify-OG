@@ -82,7 +82,11 @@
                             </article>
                         <% }) %>
                     <% } else { %>
-                        <p class="no-events-message">No events found matching your criteria. Please try different filters.</p>
+                        <div class="no-events-message">
+                            <h3>No events found</h3>
+                            <p>We couldn't find any events matching your criteria. Try adjusting your filters or check back later for new events!</p>
+                            <a href="/events" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;">View All Events</a>
+                        </div>
                     <% } %>
                 </div>
             </section>
