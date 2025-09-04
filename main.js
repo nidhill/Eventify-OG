@@ -88,6 +88,26 @@ app.post('/test-email', async (req, res) => {
     }
 });
 
+// Email queue endpoint for admin
+app.get('/admin/email-queue', async (req, res) => {
+    try {
+        const { getPendingEmails } = await import('./utils/emailQueue.js');
+        const pendingEmails = await getPendingEmails();
+        
+        res.json({
+            success: true,
+            count: pendingEmails.length,
+            emails: pendingEmails
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: 'Failed to fetch email queue',
+            error: error.message
+        });
+    }
+});
+
 app.use('/userauth', authRouter);
 app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
