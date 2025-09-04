@@ -17,47 +17,99 @@ console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? 'SET' : 'NOT SET');
 console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
 console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET');
 
-// Create transporter with better configuration for Railway
+// Create transporter with Railway-optimized configuration
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    port: 465, // Use SSL port instead of TLS
+    secure: true, // Use SSL instead of STARTTLS
     auth: {
         user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
         pass: process.env.EMAIL_PASS || 'xtwc aosx kaip qhmg',
     },
-    // Add timeout and retry settings
-    connectionTimeout: 60000, // 60 seconds for Railway
-    greetingTimeout: 30000,   // 30 seconds for Railway
-    socketTimeout: 60000,     // 60 seconds for Railway
-    // Add TLS options
+    // Railway-optimized timeout settings
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 15000,   // 15 seconds
+    socketTimeout: 30000,     // 30 seconds
+    // Enhanced TLS/SSL options for Railway
     tls: {
         rejectUnauthorized: false,
-        ciphers: 'SSLv3'
+        ciphers: 'SSLv3',
+        secureProtocol: 'TLSv1_2_method'
     },
-    // Add pool configuration for better reliability
-    pool: true,
-    maxConnections: 3, // Reduced for Railway
-    maxMessages: 50,   // Reduced for Railway
-    rateDelta: 30000,  // 30 seconds
-    rateLimit: 3       // Reduced for Railway
+    // Simplified pool configuration for Railway
+    pool: false, // Disable pooling for Railway
+    // Retry configuration
+    retryDelay: 5000,
+    maxRetries: 3
 });
+
+// Create fallback transporter for Railway
+const createFallbackTransporter = () => {
+    return nodemailer.createTransporter({
+        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
+            pass: process.env.EMAIL_PASS || 'xtwc aosx kaip qhmg',
+        },
+        connectionTimeout: 20000,
+        greetingTimeout: 10000,
+        socketTimeout: 20000,
+        tls: {
+            rejectUnauthorized: false
+        }
+    });
+};
 
 // Verify transporter configuration on startup
 transporter.verify((error, success) => {
     if (error) {
-        console.error('❌ Email transporter verification failed:', error);
+        console.error('❌ Primary email transporter verification failed:', error);
         console.error('Error details:', {
             message: error.message,
             code: error.code,
             response: error.response
         });
+        console.log('🔄 Will use fallback configuration for email sending');
     } else {
         console.log('✅ Email transporter is ready to send messages');
         console.log('📧 Email system initialized successfully');
     }
 });
+
+// Helper function to send email with fallback and retry logic
+const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
+    const maxRetries = 2;
+    
+    try {
+        // Try primary transporter first
+        const result = await transporter.sendMail(mailOptions);
+        return result;
+    } catch (error) {
+        console.log(`🔄 Primary transporter failed (attempt ${retryCount + 1}), trying fallback...`);
+        
+        if (retryCount < maxRetries) {
+            try {
+                // Try fallback transporter
+                const fallbackTransporter = createFallbackTransporter();
+                const result = await fallbackTransporter.sendMail(mailOptions);
+                console.log('✅ Email sent successfully using fallback transporter');
+                return result;
+            } catch (fallbackError) {
+                console.log(`🔄 Fallback also failed (attempt ${retryCount + 1}), retrying...`);
+                // Wait a bit before retrying
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return sendEmailWithFallback(mailOptions, retryCount + 1);
+            }
+        } else {
+            console.error('❌ All email attempts failed after', maxRetries + 1, 'tries');
+            throw error;
+        }
+    }
+};
 
 // Welcome Email
 export const sendWelcomeEmail = async (options) => {
@@ -109,7 +161,7 @@ export const sendWelcomeEmail = async (options) => {
 </table>
 `,
         };
-        const result = await transporter.sendMail(mailOptions);
+        const result = await sendEmailWithFallback(mailOptions);
         console.log('✅ Welcome email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
@@ -177,7 +229,7 @@ export const sendOtpEmail = async (options) => {
 </table>
 `,
         };
-        const result = await transporter.sendMail(mailOptions);
+        const result = await sendEmailWithFallback(mailOptions);
         console.log('✅ OTP email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
@@ -245,7 +297,7 @@ export const sendBanEmail = async (options) => {
 </table>
 `,
         };
-        await transporter.sendMail(mailOptions);
+        await sendEmailWithFallback(mailOptions);
         console.log('Ban notification email sent successfully to:', options.email);
     } catch (error) {
         console.error('Error sending ban notification email:', error);
@@ -312,7 +364,7 @@ export const sendUnbanEmail = async (options) => {
 </table>
 `,
         };
-        await transporter.sendMail(mailOptions);
+        await sendEmailWithFallback(mailOptions);
         console.log('Unban notification email sent successfully to:', options.email);
     } catch (error) {
         console.error('Error sending unban notification email:', error);
@@ -369,7 +421,7 @@ export const sendTicketEmail = async (options) => {
 </table>
 `,
         };
-        const result = await transporter.sendMail(mailOptions);
+        const result = await sendEmailWithFallback(mailOptions);
         console.log('✅ Ticket email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
