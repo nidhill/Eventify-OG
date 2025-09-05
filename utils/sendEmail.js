@@ -4,6 +4,13 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config({ override: true });
 
+// Check if API key is available
+if (!process.env.RESEND_API_KEY) {
+    console.error('❌ RESEND_API_KEY is not set in environment variables');
+    console.error('❌ Please add RESEND_API_KEY to your production environment');
+    process.exit(1);
+}
+
 // Initialize Resend with API key
 const resend = new Resend(process.env.RESEND_API_KEY);
 
