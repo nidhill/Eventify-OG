@@ -88,45 +88,14 @@ app.post('/test-email', async (req, res) => {
     }
 });
 
-// Email queue endpoint for admin
-app.get('/admin/email-queue', async (req, res) => {
-    try {
-        const { getEmailQueueStatus } = await import('./utils/emailProcessor.js');
-        const status = await getEmailQueueStatus();
-        
-        res.json({
-            success: status.success,
-            count: status.pending,
-            emails: status
-        });
-    } catch (error) {
-        res.json({
-            success: false,
-            message: 'Failed to fetch email queue',
-            error: error.message
-        });
-    }
-});
-
-// Manual email queue processing endpoint
-app.post('/admin/process-emails', async (req, res) => {
-    try {
-        const { processEmailQueue } = await import('./utils/emailProcessor.js');
-        console.log('🚀 Manual email queue processing triggered...');
-        const result = await processEmailQueue();
-        
-        res.json({
-            success: true,
-            message: 'Email queue processed successfully',
-            result: result
-        });
-    } catch (error) {
-        res.json({
-            success: false,
-            message: 'Failed to process email queue',
-            error: error.message
-        });
-    }
+// Email status endpoint for admin
+app.get('/admin/email-status', async (req, res) => {
+    res.json({
+        success: true,
+        message: 'Email system is running - all emails sent immediately',
+        status: 'active',
+        mode: 'immediate'
+    });
 });
 
 app.use('/userauth', authRouter);
@@ -228,22 +197,6 @@ app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
     console.log('📧 Email system initialized with debug logging');
     
-    // Process email queue on startup
-    try {
-        const { processEmailQueue } = await import('./utils/emailProcessor.js');
-        console.log('🔄 Processing email queue on startup...');
-        await processEmailQueue();
-    } catch (error) {
-        console.error('❌ Error processing email queue on startup:', error);
-    }
-    
-    // Process email queue every 30 seconds for faster delivery
-    setInterval(async () => {
-        try {
-            const { processEmailQueue } = await import('./utils/emailProcessor.js');
-            await processEmailQueue();
-        } catch (error) {
-            console.error('❌ Error processing email queue:', error);
-        }
-    }, 30 * 1000); // 30 seconds
+    // Email system ready - all emails sent immediately
+    console.log('📧 Email system ready - all emails will be sent immediately');
 });

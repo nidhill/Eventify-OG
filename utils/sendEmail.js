@@ -19,7 +19,7 @@ console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
 console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET');
 
 
-// Create transporter with Railway-compatible configuration
+// Create transporter optimized for instant email sending
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     host: 'smtp.gmail.com',
@@ -29,25 +29,29 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
-    // Railway-optimized settings
-    connectionTimeout: 30000, // 30 seconds
-    greetingTimeout: 15000,   // 15 seconds
-    socketTimeout: 30000,     // 30 seconds
-    // Enhanced TLS options for Railway
+    // Fast connection settings for instant sending
+    connectionTimeout: 15000, // 15 seconds for faster connection
+    greetingTimeout: 10000,   // 10 seconds
+    socketTimeout: 15000,     // 15 seconds
+    // Enhanced TLS options for production
     tls: {
         rejectUnauthorized: false,
-        ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
+        ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA',
+        minVersion: 'TLSv1.2'
     },
-    // Connection pooling for better reliability
+    // Connection pooling for instant sending
     pool: true,
-    maxConnections: 1,
+    maxConnections: 5, // More connections for faster sending
     maxMessages: 100,
-    rateLimit: 14, // 14 emails per second
+    rateLimit: 20, // 20 emails per second for faster delivery
     // Keep connection alive
-    keepBounce: true
+    keepBounce: true,
+    // Additional optimizations
+    requireTLS: true,
+    debug: false // Disable debug for faster processing
 });
 
-// Create fallback transporter for Railway
+// Create fallback transporter optimized for instant sending
 const createFallbackTransporter = () => {
     return nodemailer.createTransport({
         service: 'gmail',
@@ -58,15 +62,18 @@ const createFallbackTransporter = () => {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
         },
-        connectionTimeout: 30000,
-        greetingTimeout: 15000,
-        socketTimeout: 30000,
+        connectionTimeout: 15000, // Faster connection
+        greetingTimeout: 10000,   // Faster greeting
+        socketTimeout: 15000,     // Faster socket
         tls: {
             rejectUnauthorized: false,
-            ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
+            ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA',
+            minVersion: 'TLSv1.2'
         },
         pool: true,
-        maxConnections: 1
+        maxConnections: 3, // More connections
+        requireTLS: true,
+        debug: false // Disable debug for speed
     });
 };
 
@@ -165,13 +172,13 @@ const sendEmailViaAPI = async (mailOptions) => {
     }
 };
 
-// Helper function to send email with multiple fallback methods
-export const sendEmailWithFallback = async (mailOptions, retryCount = 0, isCritical = false) => {
-    const maxRetries = 2; // Increased retries
+// Helper function to send email immediately without queue
+export const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
+    const maxRetries = 3; // Increased retries for better reliability
     
     try {
         // Try primary transporter first
-        console.log('📤 Attempting to send email via primary SMTP...');
+        console.log('📤 Sending email immediately via primary SMTP...');
         const result = await transporter.sendMail(mailOptions);
         console.log('✅ Email sent successfully using primary transporter');
         return result;
@@ -180,8 +187,8 @@ export const sendEmailWithFallback = async (mailOptions, retryCount = 0, isCriti
         
         if (retryCount < maxRetries) {
             try {
-                // Try fallback transporter
-                console.log('📤 Attempting to send email via fallback SMTP...');
+                // Try fallback transporter immediately
+                console.log('📤 Trying fallback SMTP immediately...');
                 const fallbackTransporter = createFallbackTransporter();
                 const result = await fallbackTransporter.sendMail(mailOptions);
                 console.log('✅ Email sent successfully using fallback transporter');
@@ -189,29 +196,16 @@ export const sendEmailWithFallback = async (mailOptions, retryCount = 0, isCriti
             } catch (fallbackError) {
                 console.log(`🔄 Fallback SMTP failed (attempt ${retryCount + 1}):`, fallbackError.message);
                 
-                // Wait before retry
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                // Short wait before retry (1 second instead of 2)
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // Retry with primary transporter
-                return await sendEmailWithFallback(mailOptions, retryCount + 1, isCritical);
+                return await sendEmailWithFallback(mailOptions, retryCount + 1);
             }
         } else {
             // Use API-based email sending as final fallback
             console.log('🔄 All SMTP methods failed, using API method...');
-            const result = await sendEmailViaAPI(mailOptions);
-            
-            // For critical emails, trigger immediate queue processing
-            if (isCritical) {
-                try {
-                    const { processEmailQueue } = await import('./emailProcessor.js');
-                    console.log('🚀 Processing email queue immediately for critical email...');
-                    await processEmailQueue();
-                } catch (queueError) {
-                    console.log('⚠️ Could not process queue immediately:', queueError.message);
-                }
-            }
-            
-            return result;
+            return await sendEmailViaAPI(mailOptions);
         }
     }
 };
@@ -334,7 +328,7 @@ export const sendOtpEmail = async (options) => {
 </table>
 `,
         };
-        const result = await sendEmailWithFallback(mailOptions, 0, true); // Critical email
+        const result = await sendEmailWithFallback(mailOptions); // Send immediately
         console.log('✅ OTP email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
@@ -526,7 +520,7 @@ export const sendTicketEmail = async (options) => {
 </table>
 `,
         };
-        const result = await sendEmailWithFallback(mailOptions, 0, true); // Critical email
+        const result = await sendEmailWithFallback(mailOptions); // Send immediately
         console.log('✅ Ticket email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
