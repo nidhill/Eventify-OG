@@ -55,7 +55,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
           }
           
           // Ensure admin privileges for your email
-          if (profile.emails[0].value === 'hynidhil@gmail.com' && !existingUser.isAdmin) {
+          if (profile.emails[0].value === 'n454958@gmail.com' && !existingUser.isAdmin) {
             existingUser.isAdmin = true;
             await existingUser.save();
             console.log('Updated user to admin:', existingUser.username);
@@ -65,7 +65,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         // 2. If not, create a new user
         if (!existingUser) {
           console.log('Creating new Google user...');
-          const isAdmin = profile.emails[0].value === 'hynidhil@gmail.com'; // Give admin to your email
+          const isAdmin = profile.emails[0].value === 'n454958@gmail.com'; // Give admin to your email
           
           try {
             // Generate a valid username from displayName (remove spaces, special chars)
