@@ -57,8 +57,7 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
         timestamp: new Date().toISOString(),
-        email_user: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
-        email_pass: process.env.EMAIL_PASS ? 'SET' : 'NOT SET',
+        resend_api_key: process.env.RESEND_API_KEY ? 'SET' : 'NOT SET',
         environment: process.env.NODE_ENV || 'development'
     });
 });
@@ -69,20 +68,20 @@ app.post('/test-email', async (req, res) => {
         const { sendOtpEmail } = await import('./utils/sendEmail.js');
         
         const result = await sendOtpEmail({
-            email: process.env.EMAIL_USER || 'test@example.com',
+            email: 'test@example.com',
             name: 'Test User',
             otp: '123456'
         });
         
         res.json({
             success: true,
-            message: 'Gmail SMTP email test completed',
+            message: 'Resend API email test completed',
             result: result
         });
     } catch (error) {
         res.json({
             success: false,
-            message: 'Gmail SMTP email test failed',
+            message: 'Resend API email test failed',
             error: error.message
         });
     }
@@ -269,10 +268,10 @@ app.post('/test-signup-otp', async (req, res) => {
 app.get('/admin/email-status', async (req, res) => {
     res.json({
         success: true,
-        message: 'Gmail SMTP email system is running - all emails sent via Gmail SMTP',
+        message: 'Resend API email system is running - all emails sent via Resend API',
         status: 'active',
-        mode: 'gmail_smtp',
-        provider: 'Gmail SMTP'
+        mode: 'resend_api',
+        provider: 'Resend API'
     });
 });
 
@@ -373,8 +372,8 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log('📧 Gmail SMTP email system initialized with debug logging');
+    console.log('📧 Resend API email system initialized with debug logging');
     
-    // Email system ready - all emails sent via Gmail SMTP
-    console.log('📧 Email system ready - all emails will be sent via Gmail SMTP');
+    // Email system ready - all emails sent via Resend API
+    console.log('📧 Email system ready - all emails will be sent via Resend API');
 });
