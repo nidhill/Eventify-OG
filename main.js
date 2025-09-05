@@ -88,6 +88,183 @@ app.post('/test-email', async (req, res) => {
     }
 });
 
+// OTP email test endpoint
+app.post('/test-otp', async (req, res) => {
+    try {
+        const { sendOtpEmail } = await import('./utils/sendEmail.js');
+        
+        console.log('🧪 Testing OTP email...');
+        console.log('📧 Sending to:', process.env.EMAIL_USER);
+        console.log('📧 OTP: 123456');
+        
+        const startTime = Date.now();
+        const result = await sendOtpEmail({
+            email: process.env.EMAIL_USER || 'test@example.com',
+            name: 'Test User',
+            otp: '123456'
+        });
+        const endTime = Date.now();
+        
+        console.log('✅ OTP email sent in:', endTime - startTime, 'ms');
+        console.log('📧 Result:', result);
+        
+        res.json({
+            success: true,
+            message: 'OTP email test completed',
+            result: result,
+            timing: `${endTime - startTime}ms`
+        });
+    } catch (error) {
+        console.error('❌ OTP email test failed:', error);
+        res.json({
+            success: false,
+            message: 'OTP email test failed',
+            error: error.message
+        });
+    }
+});
+
+// Test signup simulation
+app.post('/test-signup', async (req, res) => {
+    try {
+        const { sendOtpEmail } = await import('./utils/sendEmail.js');
+        
+        console.log('🧪 Testing signup simulation...');
+        
+        // Simulate signup process
+        const testEmail = 'test@example.com';
+        const testName = 'Test User';
+        const testOtp = '123456';
+        
+        console.log('📧 Simulating signup for:', testEmail);
+        console.log('📧 Name:', testName);
+        console.log('📧 OTP:', testOtp);
+        
+        const startTime = Date.now();
+        await sendOtpEmail({ 
+            email: testEmail, 
+            name: testName, 
+            otp: testOtp 
+        });
+        const endTime = Date.now();
+        
+        console.log('✅ Signup simulation OTP sent in:', endTime - startTime, 'ms');
+        
+        res.json({
+            success: true,
+            message: 'Signup simulation completed',
+            email: testEmail,
+            timing: `${endTime - startTime}ms`
+        });
+    } catch (error) {
+        console.error('❌ Signup simulation failed:', error);
+        res.json({
+            success: false,
+            message: 'Signup simulation failed',
+            error: error.message
+        });
+    }
+});
+
+// Test OTP to your actual email
+app.post('/test-otp-real', async (req, res) => {
+    try {
+        const { sendOtpEmail } = await import('./utils/sendEmail.js');
+        
+        console.log('🧪 Testing OTP to real email...');
+        
+        const realEmail = process.env.EMAIL_USER; // Your actual email
+        const testName = 'Real Test User';
+        const testOtp = '999999';
+        
+        console.log('📧 Sending OTP to real email:', realEmail);
+        console.log('📧 Name:', testName);
+        console.log('📧 OTP:', testOtp);
+        
+        const startTime = Date.now();
+        const result = await sendOtpEmail({ 
+            email: realEmail, 
+            name: testName, 
+            otp: testOtp 
+        });
+        const endTime = Date.now();
+        
+        console.log('✅ Real OTP email sent in:', endTime - startTime, 'ms');
+        console.log('📧 Result:', result);
+        
+        res.json({
+            success: true,
+            message: 'Real OTP email sent successfully',
+            email: realEmail,
+            otp: testOtp,
+            timing: `${endTime - startTime}ms`,
+            result: result
+        });
+    } catch (error) {
+        console.error('❌ Real OTP email failed:', error);
+        res.json({
+            success: false,
+            message: 'Real OTP email failed',
+            error: error.message
+        });
+    }
+});
+
+// Test OTP generation and sending (like in signup)
+app.post('/test-signup-otp', async (req, res) => {
+    try {
+        const { sendOtpEmail } = await import('./utils/sendEmail.js');
+        const Otp = (await import('./models/otpModel.js')).default;
+        const crypto = await import('crypto');
+        
+        console.log('🧪 Testing OTP generation and sending (like in signup)...');
+        
+        const testEmail = process.env.EMAIL_USER; // Your actual email
+        const testName = 'Signup Test User';
+        
+        // Generate OTP (like in signup)
+        const otp = crypto.randomInt(100000, 999999).toString();
+        console.log('🔢 Generated OTP for signup test:', otp);
+        
+        // Delete any existing OTP for this email
+        await Otp.deleteOne({ email: testEmail });
+        console.log('🗑️ Deleted existing OTP for:', testEmail);
+        
+        // Create new OTP
+        await Otp.create({ email: testEmail, otp: otp });
+        console.log('💾 Stored OTP in database for:', testEmail);
+        
+        // Send OTP email (like in signup)
+        console.log('📧 Attempting to send OTP email...');
+        console.log('📧 To:', testEmail);
+        console.log('📧 Name:', testName);
+        console.log('📧 OTP:', otp);
+        
+        const startTime = Date.now();
+        await sendOtpEmail({ email: testEmail, name: testName, otp: otp });
+        const endTime = Date.now();
+        
+        console.log('✅ OTP email sent successfully to:', testEmail);
+        console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
+        
+        res.json({
+            success: true,
+            message: 'Signup OTP test completed',
+            email: testEmail,
+            otp: otp,
+            timing: `${endTime - startTime}ms`
+        });
+        
+    } catch (error) {
+        console.error('❌ Signup OTP test failed:', error);
+        res.json({
+            success: false,
+            message: 'Signup OTP test failed',
+            error: error.message
+        });
+    }
+});
+
 // Email status endpoint for admin
 app.get('/admin/email-status', async (req, res) => {
     res.json({

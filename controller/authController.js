@@ -57,19 +57,36 @@ export const signup = async (req, res) => {
     
     // Generate OTP
     const otp = crypto.randomInt(100000, 999999).toString();
+    console.log('🔢 Generated OTP for signup:', otp);
     
     // Delete any existing OTP for this email
     await Otp.deleteOne({ email: newUser.email });
+    console.log('🗑️ Deleted existing OTP for:', newUser.email);
     
     // Create new OTP
     await Otp.create({ email: newUser.email, otp: otp });
+    console.log('💾 Stored OTP in database for:', newUser.email);
     
     // Send OTP email
     try {
+      console.log('📧 Attempting to send OTP email...');
+      console.log('📧 To:', newUser.email);
+      console.log('📧 Name:', newUser.name);
+      console.log('📧 OTP:', otp);
+      
+      const startTime = Date.now();
       await sendOtpEmail({ email: newUser.email, name: newUser.name, otp: otp });
-      console.log('OTP email sent successfully to:', newUser.email);
+      const endTime = Date.now();
+      
+      console.log('✅ OTP email sent successfully to:', newUser.email);
+      console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
     } catch (emailError) {
-      console.error('Failed to send OTP email:', emailError);
+      console.error('❌ Failed to send OTP email:', emailError);
+      console.error('❌ Email error details:', {
+        message: emailError.message,
+        code: emailError.code,
+        response: emailError.response
+      });
       // Continue even if email fails
     }
     
