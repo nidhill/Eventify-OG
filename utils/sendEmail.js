@@ -31,7 +31,7 @@ export const sendEmail = async ({ to, subject, text, html }) => {
         const startTime = Date.now();
         
         const { data, error } = await resend.emails.send({
-            from: 'Eventify <onboarding@resend.dev>', // Use Resend's default verified domain
+            from: `Eventify <${process.env.EMAIL_USER}>`, // Use your verified email address
             to: [to],
             subject: subject,
             text: text,
