@@ -29,23 +29,27 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
         pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
     },
-    // Minimal timeout settings for Railway
-    connectionTimeout: 10000, // 10 seconds
-    greetingTimeout: 5000,   // 5 seconds
-    socketTimeout: 10000,     // 10 seconds
-    // Basic TLS options
+    // Railway-optimized settings
+    connectionTimeout: 30000, // 30 seconds
+    greetingTimeout: 15000,   // 15 seconds
+    socketTimeout: 30000,     // 30 seconds
+    // Enhanced TLS options for Railway
     tls: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
+        ciphers: 'SSLv3'
     },
-    // No pooling for Railway
-    pool: false,
-    // Disable keepalive
-    keepBounce: false
+    // Connection pooling for better reliability
+    pool: true,
+    maxConnections: 1,
+    maxMessages: 100,
+    rateLimit: 14, // 14 emails per second
+    // Keep connection alive
+    keepBounce: true
 });
 
 // Create fallback transporter for Railway
 const createFallbackTransporter = () => {
-    return nodemailer.createTransporter({
+    return nodemailer.createTransport({
         service: 'gmail',
         host: 'smtp.gmail.com',
         port: 587,
@@ -54,18 +58,33 @@ const createFallbackTransporter = () => {
             user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
             pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
         },
-        connectionTimeout: 20000,
-        greetingTimeout: 10000,
-        socketTimeout: 20000,
+        connectionTimeout: 30000,
+        greetingTimeout: 15000,
+        socketTimeout: 30000,
         tls: {
-            rejectUnauthorized: false
-        }
+            rejectUnauthorized: false,
+            ciphers: 'SSLv3'
+        },
+        pool: true,
+        maxConnections: 1
     });
 };
 
-// Skip transporter verification on startup to avoid Railway connection issues
-console.log('📧 Email system initialized with fallback methods');
-console.log('🔄 SMTP verification skipped - will use fallback methods if needed');
+// Verify transporter in production
+if (process.env.NODE_ENV === 'production' || process.env.RAILWAY_ENVIRONMENT === 'production') {
+    console.log('🔧 Production environment detected - verifying email connection...');
+    transporter.verify((error, success) => {
+        if (error) {
+            console.log('⚠️ Email verification failed:', error.message);
+            console.log('🔄 Will use fallback methods for email sending');
+        } else {
+            console.log('✅ Email connection verified successfully');
+        }
+    });
+} else {
+    console.log('📧 Email system initialized with fallback methods');
+    console.log('🔄 SMTP verification skipped - will use fallback methods if needed');
+}
 
 // Alternative email sending using a Railway-compatible service
 const sendEmailViaAPI = async (mailOptions) => {
@@ -148,27 +167,33 @@ const sendEmailViaAPI = async (mailOptions) => {
 
 // Helper function to send email with multiple fallback methods
 const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
-    const maxRetries = 1;
+    const maxRetries = 2; // Increased retries
     
     try {
         // Try primary transporter first
+        console.log('📤 Attempting to send email via primary SMTP...');
         const result = await transporter.sendMail(mailOptions);
         console.log('✅ Email sent successfully using primary transporter');
         return result;
     } catch (error) {
-        console.log(`🔄 Primary transporter failed (attempt ${retryCount + 1}), trying fallback...`);
+        console.log(`🔄 Primary transporter failed (attempt ${retryCount + 1}):`, error.message);
         
         if (retryCount < maxRetries) {
             try {
                 // Try fallback transporter
+                console.log('📤 Attempting to send email via fallback SMTP...');
                 const fallbackTransporter = createFallbackTransporter();
                 const result = await fallbackTransporter.sendMail(mailOptions);
                 console.log('✅ Email sent successfully using fallback transporter');
                 return result;
             } catch (fallbackError) {
-                console.log(`🔄 Fallback also failed (attempt ${retryCount + 1}), using API method...`);
-                // Use API-based email sending as final fallback
-                return await sendEmailViaAPI(mailOptions);
+                console.log(`🔄 Fallback SMTP failed (attempt ${retryCount + 1}):`, fallbackError.message);
+                
+                // Wait before retry
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Retry with primary transporter
+                return await sendEmailWithFallback(mailOptions, retryCount + 1);
             }
         } else {
             // Use API-based email sending as final fallback
