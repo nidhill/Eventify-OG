@@ -166,7 +166,7 @@ const sendEmailViaAPI = async (mailOptions) => {
 };
 
 // Helper function to send email with multiple fallback methods
-export const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
+export const sendEmailWithFallback = async (mailOptions, retryCount = 0, isCritical = false) => {
     const maxRetries = 2; // Increased retries
     
     try {
@@ -193,12 +193,25 @@ export const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 // Retry with primary transporter
-                return await sendEmailWithFallback(mailOptions, retryCount + 1);
+                return await sendEmailWithFallback(mailOptions, retryCount + 1, isCritical);
             }
         } else {
             // Use API-based email sending as final fallback
             console.log('🔄 All SMTP methods failed, using API method...');
-            return await sendEmailViaAPI(mailOptions);
+            const result = await sendEmailViaAPI(mailOptions);
+            
+            // For critical emails, trigger immediate queue processing
+            if (isCritical) {
+                try {
+                    const { processEmailQueue } = await import('./emailProcessor.js');
+                    console.log('🚀 Processing email queue immediately for critical email...');
+                    await processEmailQueue();
+                } catch (queueError) {
+                    console.log('⚠️ Could not process queue immediately:', queueError.message);
+                }
+            }
+            
+            return result;
         }
     }
 };
@@ -321,7 +334,7 @@ export const sendOtpEmail = async (options) => {
 </table>
 `,
         };
-        const result = await sendEmailWithFallback(mailOptions);
+        const result = await sendEmailWithFallback(mailOptions, 0, true); // Critical email
         console.log('✅ OTP email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;
@@ -513,7 +526,7 @@ export const sendTicketEmail = async (options) => {
 </table>
 `,
         };
-        const result = await sendEmailWithFallback(mailOptions);
+        const result = await sendEmailWithFallback(mailOptions, 0, true); // Critical email
         console.log('✅ Ticket email sent successfully to:', options.email);
         console.log('Message ID:', result.messageId);
         return result;

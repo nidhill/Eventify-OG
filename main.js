@@ -108,6 +108,27 @@ app.get('/admin/email-queue', async (req, res) => {
     }
 });
 
+// Manual email queue processing endpoint
+app.post('/admin/process-emails', async (req, res) => {
+    try {
+        const { processEmailQueue } = await import('./utils/emailProcessor.js');
+        console.log('🚀 Manual email queue processing triggered...');
+        const result = await processEmailQueue();
+        
+        res.json({
+            success: true,
+            message: 'Email queue processed successfully',
+            result: result
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: 'Failed to process email queue',
+            error: error.message
+        });
+    }
+});
+
 app.use('/userauth', authRouter);
 app.use('/events', eventRouter);
 app.use('/booking', bookingRouter);
@@ -216,7 +237,7 @@ app.listen(PORT, async () => {
         console.error('❌ Error processing email queue on startup:', error);
     }
     
-    // Process email queue every 5 minutes
+    // Process email queue every 30 seconds for faster delivery
     setInterval(async () => {
         try {
             const { processEmailQueue } = await import('./utils/emailProcessor.js');
@@ -224,5 +245,5 @@ app.listen(PORT, async () => {
         } catch (error) {
             console.error('❌ Error processing email queue:', error);
         }
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 30 * 1000); // 30 seconds
 });
