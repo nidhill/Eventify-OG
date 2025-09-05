@@ -69,7 +69,7 @@ app.post('/test-email', async (req, res) => {
         const { sendOtpEmail } = await import('./utils/sendEmail.js');
         
         const result = await sendOtpEmail({
-            email: 'hynidhil@gmail.com',
+            email: process.env.EMAIL_USER || 'test@example.com',
             name: 'Test User',
             otp: '123456'
         });

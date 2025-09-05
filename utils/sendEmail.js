@@ -26,8 +26,8 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
-        pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
     // Railway-optimized settings
     connectionTimeout: 30000, // 30 seconds
@@ -55,8 +55,8 @@ const createFallbackTransporter = () => {
         port: 587,
         secure: false,
         auth: {
-            user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
-            pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
         },
         connectionTimeout: 30000,
         greetingTimeout: 15000,
@@ -207,7 +207,7 @@ const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
 export const sendWelcomeEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
+            from: `Eventify <${process.env.EMAIL_USER}>`,
             to: options.email,
             subject: 'Welcome to Eventify!',
             html: `
@@ -272,7 +272,7 @@ export const sendWelcomeEmail = async (options) => {
 export const sendOtpEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
+            from: `Eventify <${process.env.EMAIL_USER}>`,
             to: options.email,
             subject: 'Your OTP for Eventify Verification',
             html: `
@@ -340,7 +340,7 @@ export const sendOtpEmail = async (options) => {
 export const sendBanEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Admin <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
+            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
             to: options.email,
             subject: 'Account Suspension Notice - Eventify',
             html: `
@@ -400,7 +400,7 @@ export const sendBanEmail = async (options) => {
 export const sendUnbanEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Admin <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
+            from: `Eventify Admin <${process.env.EMAIL_USER}>`,
             to: options.email,
             subject: 'Account Restored - Eventify',
             html: `
@@ -467,7 +467,7 @@ export const sendUnbanEmail = async (options) => {
 export const sendTicketEmail = async (options) => {
     try {
         const mailOptions = {
-            from: `Eventify Tickets <${process.env.EMAIL_USER || 'hynidhil@gmail.com'}>`,
+            from: `Eventify Tickets <${process.env.EMAIL_USER}>`,
             to: options.email,
             subject: `Your Ticket for ${options.event.title}`,
             html: `
