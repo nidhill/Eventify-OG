@@ -91,13 +91,13 @@ app.post('/test-email', async (req, res) => {
 // Email queue endpoint for admin
 app.get('/admin/email-queue', async (req, res) => {
     try {
-        const { getPendingEmails } = await import('./utils/emailQueue.js');
-        const pendingEmails = await getPendingEmails();
+        const { getEmailQueueStatus } = await import('./utils/emailProcessor.js');
+        const status = await getEmailQueueStatus();
         
         res.json({
-            success: true,
-            count: pendingEmails.length,
-            emails: pendingEmails
+            success: status.success,
+            count: status.pending,
+            emails: status
         });
     } catch (error) {
         res.json({
@@ -203,7 +203,26 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
     console.log('📧 Email system initialized with debug logging');
+    
+    // Process email queue on startup
+    try {
+        const { processEmailQueue } = await import('./utils/emailProcessor.js');
+        console.log('🔄 Processing email queue on startup...');
+        await processEmailQueue();
+    } catch (error) {
+        console.error('❌ Error processing email queue on startup:', error);
+    }
+    
+    // Process email queue every 5 minutes
+    setInterval(async () => {
+        try {
+            const { processEmailQueue } = await import('./utils/emailProcessor.js');
+            await processEmailQueue();
+        } catch (error) {
+            console.error('❌ Error processing email queue:', error);
+        }
+    }, 5 * 60 * 1000); // 5 minutes
 });
