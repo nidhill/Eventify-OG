@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
     secure: false,
     auth: {
         user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
-        pass: process.env.EMAIL_PASS || 'hjrp prtb bafl jrxe',
+        pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
     },
     // Minimal timeout settings for Railway
     connectionTimeout: 10000, // 10 seconds
@@ -52,7 +52,7 @@ const createFallbackTransporter = () => {
         secure: false,
         auth: {
             user: process.env.EMAIL_USER || 'hynidhil@gmail.com',
-            pass: process.env.EMAIL_PASS || 'hjrp prtb bafl jrxe',
+            pass: process.env.EMAIL_PASS || 'hjrpprtbbafljrxe',
         },
         connectionTimeout: 20000,
         greetingTimeout: 10000,
