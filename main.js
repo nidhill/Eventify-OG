@@ -58,7 +58,7 @@ app.get('/health', (req, res) => {
         status: 'OK',
         timestamp: new Date().toISOString(),
         email_user: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
-        resend_api_key: process.env.RESEND_API_KEY ? 'SET' : 'NOT SET',
+        email_pass: process.env.EMAIL_PASS ? 'SET' : 'NOT SET',
         environment: process.env.NODE_ENV || 'development'
     });
 });
@@ -76,13 +76,13 @@ app.post('/test-email', async (req, res) => {
         
         res.json({
             success: true,
-            message: 'Resend email test completed',
+            message: 'Gmail SMTP email test completed',
             result: result
         });
     } catch (error) {
         res.json({
             success: false,
-            message: 'Resend email test failed',
+            message: 'Gmail SMTP email test failed',
             error: error.message
         });
     }
@@ -269,10 +269,10 @@ app.post('/test-signup-otp', async (req, res) => {
 app.get('/admin/email-status', async (req, res) => {
     res.json({
         success: true,
-        message: 'Resend email system is running - all emails sent via Resend API',
+        message: 'Gmail SMTP email system is running - all emails sent via Gmail SMTP',
         status: 'active',
-        mode: 'resend',
-        provider: 'Resend API'
+        mode: 'gmail_smtp',
+        provider: 'Gmail SMTP'
     });
 });
 
@@ -373,8 +373,8 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log('📧 Email system initialized with debug logging');
+    console.log('📧 Gmail SMTP email system initialized with debug logging');
     
-    // Email system ready - all emails sent immediately
-    console.log('📧 Email system ready - all emails will be sent immediately');
+    // Email system ready - all emails sent via Gmail SMTP
+    console.log('📧 Email system ready - all emails will be sent via Gmail SMTP');
 });
