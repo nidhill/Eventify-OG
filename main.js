@@ -58,7 +58,7 @@ app.get('/health', (req, res) => {
         status: 'OK',
         timestamp: new Date().toISOString(),
         email_user: process.env.EMAIL_USER ? 'SET' : 'NOT SET',
-        email_pass: process.env.EMAIL_PASS ? 'SET' : 'NOT SET',
+        resend_api_key: process.env.RESEND_API_KEY ? 'SET' : 'NOT SET',
         environment: process.env.NODE_ENV || 'development'
     });
 });
@@ -76,13 +76,13 @@ app.post('/test-email', async (req, res) => {
         
         res.json({
             success: true,
-            message: 'Email test completed',
+            message: 'Resend email test completed',
             result: result
         });
     } catch (error) {
         res.json({
             success: false,
-            message: 'Email test failed',
+            message: 'Resend email test failed',
             error: error.message
         });
     }
@@ -269,9 +269,10 @@ app.post('/test-signup-otp', async (req, res) => {
 app.get('/admin/email-status', async (req, res) => {
     res.json({
         success: true,
-        message: 'Email system is running - all emails sent immediately',
+        message: 'Resend email system is running - all emails sent via Resend API',
         status: 'active',
-        mode: 'immediate'
+        mode: 'resend',
+        provider: 'Resend API'
     });
 });
 
