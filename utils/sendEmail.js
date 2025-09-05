@@ -36,7 +36,7 @@ const transporter = nodemailer.createTransport({
     // Enhanced TLS options for Railway
     tls: {
         rejectUnauthorized: false,
-        ciphers: 'SSLv3'
+        ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
     },
     // Connection pooling for better reliability
     pool: true,
@@ -63,7 +63,7 @@ const createFallbackTransporter = () => {
         socketTimeout: 30000,
         tls: {
             rejectUnauthorized: false,
-            ciphers: 'SSLv3'
+            ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
         },
         pool: true,
         maxConnections: 1
@@ -166,7 +166,7 @@ const sendEmailViaAPI = async (mailOptions) => {
 };
 
 // Helper function to send email with multiple fallback methods
-const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
+export const sendEmailWithFallback = async (mailOptions, retryCount = 0) => {
     const maxRetries = 2; // Increased retries
     
     try {
