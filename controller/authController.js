@@ -297,8 +297,25 @@ export const showlogin = async (req,res)=>{
 
 export const home = async (req,res)=>{
   try {
-    // Optimize: Only fetch necessary fields and limit results
-    const allEvents = await Event.find({}, {
+    // Import featured events utility
+    const { getFeaturedEvents, getRotationStatus } = await import('../utils/featuredEvents.js');
+    
+    // Get rotating featured events (6 events that change every 10 minutes)
+    const featuredEvents = await getFeaturedEvents(6);
+    
+    // Get rotation status for debugging
+    const rotationStatus = getRotationStatus();
+    console.log('🎯 Featured Events Status:', {
+      featuredCount: featuredEvents.length,
+      nextRotationIn: rotationStatus.nextRotationIn + ' minutes',
+      lastRotation: rotationStatus.lastRotationTime
+    });
+    
+    // Get all upcoming events for the main events section
+    const currentDate = new Date();
+    const allUpcomingEvents = await Event.find({
+      date: { $gte: currentDate }
+    }, {
       title: 1,
       description: 1,
       date: 1,
@@ -307,33 +324,32 @@ export const home = async (req,res)=>{
       price: 1,
       category: 1,
       createdBy: 1
-    }).sort({ date: 1 }).limit(50); // Limit to 50 events for faster loading
+    })
+    .populate('createdBy', 'username name')
+    .sort({ date: 1 })
+    .limit(20); // Limit to 20 events for faster loading
     
-    // Get current date for comparison
-    const currentDate = new Date();
-    
-    // Separate events into upcoming and previous (optimized)
-    const upcomingEvents = [];
-    const previousEvents = [];
-    
-    for (const event of allEvents) {
-      if (!event.date) continue;
-      const eventDate = new Date(event.date);
-      if (eventDate >= currentDate) {
-        upcomingEvents.push(event);
-      } else {
-        previousEvents.push(event);
-      }
-    }
-    
-    // Sort previous events by most recent first
-    previousEvents.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Get some previous events for the previous events section
+    const previousEvents = await Event.find({
+      date: { $lt: currentDate }
+    }, {
+      title: 1,
+      description: 1,
+      date: 1,
+      location: 1,
+      image: 1,
+      price: 1,
+      category: 1,
+      createdBy: 1
+    })
+    .populate('createdBy', 'username name')
+    .sort({ date: -1 })
+    .limit(10); // Limit to 10 previous events
     
     // Check if user is a new Google OAuth user who needs to choose user type
-    // For Google OAuth users, show the selection if they haven't explicitly chosen their type
     const needsUserTypeSelection = req.user && 
                                  req.user.googleId && 
-                                 !req.user.hasChosenUserType; // Show for Google users who haven't chosen yet
+                                 !req.user.hasChosenUserType;
     
     console.log('User type selection check:', {
       userId: req.user?._id,
@@ -345,9 +361,11 @@ export const home = async (req,res)=>{
     
     res.render('home', { 
         user: req.user, 
-        events: upcomingEvents,
-        previousEvents: previousEvents,
-        needsUserTypeSelection: needsUserTypeSelection
+        featuredEvents: featuredEvents, // Rotating featured events
+        events: allUpcomingEvents, // All upcoming events
+        previousEvents: previousEvents, // Previous events
+        needsUserTypeSelection: needsUserTypeSelection,
+        rotationStatus: rotationStatus // For debugging
     });
   } catch (error) {
     console.error('Home page error:', error);
