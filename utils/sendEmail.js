@@ -1,59 +1,62 @@
-import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config({ override: true });
 
-// Check if API key is available
-if (!process.env.RESEND_API_KEY) {
-    console.error('❌ RESEND_API_KEY is not set in environment variables');
-    console.error('❌ Please add RESEND_API_KEY to your production environment');
+// Check if Gmail credentials are available
+if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.error('❌ Gmail credentials are not set in environment variables');
+    console.error('❌ Please add GMAIL_USER and GMAIL_APP_PASSWORD to your environment');
     process.exit(1);
 }
 
-// Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Create Gmail SMTP transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD
+    }
+});
 
 // Debug environment variables
 console.log('🔍 Email Configuration Debug:');
-console.log('RESEND_API_KEY:', process.env.RESEND_API_KEY ? 'SET' : 'NOT SET');
+console.log('GMAIL_USER:', process.env.GMAIL_USER ? 'SET' : 'NOT SET');
+console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? 'SET' : 'NOT SET');
 console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
-console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET');
 
 // Main email sending function
 export const sendEmail = async ({ to, subject, text, html }) => {
     try {
-        console.log('📤 Sending email via Resend API...');
+        console.log('📤 Sending email via Gmail SMTP...');
         console.log('📧 To:', to);
         console.log('📧 Subject:', subject);
         
         const startTime = Date.now();
         
-        const { data, error } = await resend.emails.send({
-            from: 'Eventify <onboarding@resend.dev>', // Use Resend's verified domain
-            to: [to],
+        const mailOptions = {
+            from: `Eventify <${process.env.GMAIL_USER}>`,
+            to: to,
             subject: subject,
             text: text,
             html: html,
-        });
+        };
+        
+        const info = await transporter.sendMail(mailOptions);
         
         const endTime = Date.now();
         
-        if (error) {
-            console.error('❌ Resend API error:', error);
-            throw new Error(`Resend API error: ${error.message}`);
-        }
-        
-        console.log('✅ Email sent successfully via Resend API');
+        console.log('✅ Email sent successfully via Gmail SMTP');
         console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
-        console.log('📧 Message ID:', data?.id);
+        console.log('📧 Message ID:', info.messageId);
         
         return {
             success: true,
-            messageId: data?.id,
+            messageId: info.messageId,
             accepted: [to],
             rejected: [],
-            response: 'Email sent via Resend API'
+            response: 'Email sent via Gmail SMTP'
         };
         
     } catch (error) {
@@ -373,4 +376,4 @@ export const sendUnbanEmail = async (options) => {
     }
 };
 
-console.log('📧 Resend email system initialized successfully');
+console.log('📧 Gmail SMTP email system initialized successfully');

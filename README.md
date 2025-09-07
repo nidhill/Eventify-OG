@@ -116,8 +116,8 @@ Eventify-OG/
    GOOGLE_CLIENT_ID=your_google_client_id
    GOOGLE_CLIENT_SECRET=your_google_client_secret
    CALLBACK_URL=your_callback_url
-   EMAIL_USER=your_email
-   EMAIL_PASS=your_email_password
+   GMAIL_USER=your_gmail_address
+   GMAIL_APP_PASSWORD=your_gmail_app_password
    ```
 
 4. **Database Setup**
@@ -147,10 +147,15 @@ Eventify-OG/
 5. Add authorized redirect URIs
 6. Update your `.env` file with the credentials
 
-### Email Configuration
-1. Configure your email service (Gmail, Outlook, etc.)
-2. Update `EMAIL_USER` and `EMAIL_PASS` in `.env`
-3. For Gmail, enable 2-factor authentication and use app passwords
+### Gmail SMTP Configuration
+1. Enable 2-factor authentication on your Gmail account
+2. Generate an App Password for your Gmail account:
+   - Go to Google Account settings
+   - Security → 2-Step Verification → App passwords
+   - Generate a new app password for "Mail"
+3. Update `GMAIL_USER` and `GMAIL_APP_PASSWORD` in `.env`
+4. Use your full Gmail address (e.g., yourname@gmail.com) for `GMAIL_USER`
+5. Use the 16-character app password (no spaces) for `GMAIL_APP_PASSWORD`
 
 ## 📱 Usage
 
@@ -218,13 +223,20 @@ Eventify-OG/
 ## 🧪 Testing
 
 ```bash
-# Run tests (when implemented)
-npm test
+# Test Gmail SMTP configuration
+node test-email.js
 
 # Manual testing endpoints
 GET /test - Server status
 GET /auth/google/status - OAuth configuration status
 ```
+
+### Email Testing
+After setting up your Gmail SMTP configuration, you can test the email functionality by running:
+```bash
+node test-email.js
+```
+This will send a test email to your Gmail address to verify the configuration is working correctly.
 
 ## 🤝 Contributing
 
