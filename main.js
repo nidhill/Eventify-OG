@@ -75,13 +75,13 @@ app.post('/test-email', async (req, res) => {
         
         res.json({
             success: true,
-            message: 'Resend API email test completed',
+            message: 'Gmail SMTP email test completed',
             result: result
         });
     } catch (error) {
         res.json({
             success: false,
-            message: 'Resend API email test failed',
+            message: 'Gmail SMTP email test failed',
             error: error.message
         });
     }
@@ -268,10 +268,10 @@ app.post('/test-signup-otp', async (req, res) => {
 app.get('/admin/email-status', async (req, res) => {
     res.json({
         success: true,
-        message: 'Resend API email system is running - all emails sent via Resend API',
+        message: 'Gmail SMTP email system is running - all emails sent via Gmail SMTP',
         status: 'active',
-        mode: 'resend_api',
-        provider: 'Resend API'
+        mode: 'gmail_smtp',
+        provider: 'Gmail SMTP'
     });
 });
 
@@ -372,8 +372,8 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, async () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log('📧 Resend API email system initialized with debug logging');
+    console.log('📧 Gmail SMTP email system initialized with debug logging');
     
-    // Email system ready - all emails sent via Resend API
-    console.log('📧 Email system ready - all emails will be sent via Resend API');
+    // Email system ready - all emails sent via Gmail SMTP
+    console.log('📧 Email system ready - all emails will be sent via Gmail SMTP');
 });
