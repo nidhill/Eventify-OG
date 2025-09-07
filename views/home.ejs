@@ -34,20 +34,13 @@
             <div class="section-header">
                 <h2>Featured Events</h2>
                 <p>Be sure not to miss these Events today</p>
-                <div class="rotation-indicator" style="display: flex; align-items: center; justify-content: center; margin-top: 10px; font-size: 0.9rem; color: #a9b6c0;">
-                    <span style="margin-right: 8px;">🔄</span>
-                    <span>Events rotate every 10 minutes</span>
-                    <% if (typeof rotationStatus !== 'undefined' && rotationStatus) { %>
-                        <span style="margin-left: 8px; color: #4A90E2;">
-                            (Next rotation in <%= rotationStatus.nextRotationIn %> min)
-                        </span>
-                    <% } %>
-                </div>
             </div>
             
+         
+            
             <div class="event-grid">
-                <% if (featuredEvents && featuredEvents.length > 0) { %>
-                    <% featuredEvents.forEach(event => { %>
+                <% if (events && events.length > 0) { %>
+                    <% events.slice(0, 3).forEach(event => { %>
                         <article class="event-card">
                             <img class="event-image" src="<%= event.image %>" alt="<%= event.title %> Poster">
                             <div class="event-details">
@@ -76,10 +69,7 @@
                         </article>
                     <% }) %>
                 <% } else { %>
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #a9b6c0;">
-                        <p>No featured events available at the moment.</p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Events will appear here as they become available.</p>
-                    </div>
+                    <p>No featured events available at the moment.</p>
                 <% } %>
             </div>
         </section>
