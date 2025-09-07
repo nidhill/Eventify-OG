@@ -11,13 +11,22 @@ if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
     process.exit(1);
 }
 
-// Create Gmail SMTP transporter
+// Create Gmail SMTP transporter with Railway-optimized settings
 const transporter = nodemailer.createTransport({
     service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // true for 465, false for other ports
     auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
-    }
+    },
+    tls: {
+        rejectUnauthorized: false // For Railway deployment
+    },
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000, // 30 seconds
+    socketTimeout: 60000 // 60 seconds
 });
 
 // Debug environment variables
@@ -25,6 +34,8 @@ console.log('🔍 Email Configuration Debug:');
 console.log('GMAIL_USER:', process.env.GMAIL_USER ? 'SET' : 'NOT SET');
 console.log('GMAIL_APP_PASSWORD:', process.env.GMAIL_APP_PASSWORD ? 'SET' : 'NOT SET');
 console.log('NODE_ENV:', process.env.NODE_ENV || 'NOT SET');
+console.log('PORT:', process.env.PORT || 'NOT SET');
+console.log('Railway Environment:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET');
 
 // Main email sending function
 export const sendEmail = async ({ to, subject, text, html }) => {
@@ -64,8 +75,17 @@ export const sendEmail = async ({ to, subject, text, html }) => {
         console.error('Error details:', {
             message: error.message,
             code: error.code,
-            response: error.response
+            response: error.response,
+            command: error.command,
+            responseCode: error.responseCode
         });
+        
+        // Railway-specific error handling
+        if (process.env.RAILWAY_ENVIRONMENT) {
+            console.error('🚂 Railway Environment Error - Check environment variables');
+            console.error('🚂 Make sure GMAIL_USER and GMAIL_APP_PASSWORD are set in Railway dashboard');
+        }
+        
         throw error;
     }
 };
