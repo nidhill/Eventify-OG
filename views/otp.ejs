@@ -30,6 +30,10 @@
                 <% if (error) { %>
                     <p class="error-message"><%= error %></p>
                 <% } %>
+                
+                <% if (message) { %>
+                    <p class="success-message"><%= message %></p>
+                <% } %>
 
                 <form action="/userauth/verify-otp" method="POST">
                     <input type="hidden" name="email" value="<%= email %>">

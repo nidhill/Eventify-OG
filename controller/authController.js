@@ -132,10 +132,13 @@ export const checkUsername = async (req, res) => {
 // OTP പേജ് കാണിക്കാൻ
 export const showOtpPage = (req, res) => {
     const email = req.query.email;
+    const error = req.query.error;
+    const message = req.query.message;
+    
     if (!email) {
         return res.redirect('/userauth/showsignup');
     }
-    res.render('otp', { email: email, error: null });
+    res.render('otp', { email: email, error: error, message: message });
 };
 
 // OTP വെരിഫൈ ചെയ്യാൻ
@@ -184,6 +187,71 @@ export const verifyOtp = async (req, res) => {
     } catch (error) {
         console.error('OTP verification error:', error);
         res.render('otp', { email: req.body.email || '', error: 'Verification failed. Please try again.' });
+    }
+};
+
+// Resend OTP functionality
+export const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.query;
+        
+        if (!email) {
+            return res.redirect('/userauth/showsignup');
+        }
+        
+        // Check if user exists and is not verified
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.render('otp', { email, error: 'User not found. Please sign up again.' });
+        }
+        
+        if (user.isVerified) {
+            return res.redirect('/userauth/showlogin');
+        }
+        
+        // Generate new OTP
+        const otp = crypto.randomInt(100000, 999999).toString();
+        console.log('🔢 Generated new OTP for resend:', otp);
+        
+        // Delete any existing OTP for this email
+        await Otp.deleteOne({ email });
+        console.log('🗑️ Deleted existing OTP for:', email);
+        
+        // Create new OTP
+        await Otp.create({ email: email, otp: otp });
+        console.log('💾 Stored new OTP in database for:', email);
+        
+        // Send OTP email
+        try {
+            console.log('📧 Attempting to resend OTP email...');
+            console.log('📧 To:', email);
+            console.log('📧 Name:', user.name);
+            console.log('📧 OTP:', otp);
+            
+            const startTime = Date.now();
+            await sendOtpEmail({ email: email, name: user.name, otp: otp });
+            const endTime = Date.now();
+            
+            console.log('✅ OTP email resent successfully to:', email);
+            console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
+            
+            // Redirect back to OTP page with success message
+            res.redirect(`/userauth/verify-otp?email=${email}&message=OTP resent successfully`);
+        } catch (emailError) {
+            console.error('❌ Failed to resend OTP email:', emailError);
+            console.error('❌ Email error details:', {
+                message: emailError.message,
+                code: emailError.code,
+                response: emailError.response
+            });
+            
+            // Redirect back to OTP page with error message
+            res.redirect(`/userauth/verify-otp?email=${email}&error=Failed to resend OTP. Please try again.`);
+        }
+        
+    } catch (error) {
+        console.error('Resend OTP error:', error);
+        res.redirect(`/userauth/verify-otp?email=${req.query.email || ''}&error=Failed to resend OTP. Please try again.`);
     }
 };
 
