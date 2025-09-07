@@ -1,14 +1,41 @@
 import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 import dotenv from 'dotenv';
 
 // Load environment variables
 dotenv.config({ override: true });
+
+// Check if we're in Railway environment (production)
+const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production' || process.env.NODE_ENV === 'production';
 
 // Check if Gmail credentials are available
 if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
     console.error('❌ Gmail credentials are not set in environment variables');
     console.error('❌ Please add GMAIL_USER and GMAIL_APP_PASSWORD to your environment');
     process.exit(1);
+}
+
+// Initialize Gmail API for Railway
+let gmail = null;
+if (isRailway) {
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            process.env.CALLBACK_URL
+        );
+        
+        // Use app password as refresh token for Gmail API
+        oauth2Client.setCredentials({
+            refresh_token: process.env.GMAIL_APP_PASSWORD
+        });
+        
+        gmail = google.gmail({ version: 'v1', auth: oauth2Client });
+        console.log('📧 Gmail API initialized for Railway deployment');
+    } catch (error) {
+        console.error('❌ Failed to initialize Gmail API:', error.message);
+        console.error('❌ Falling back to SMTP (may not work on Railway)');
+    }
 }
 
 // Create Gmail SMTP transporter with Railway-optimized settings
@@ -40,35 +67,82 @@ console.log('Railway Environment:', process.env.RAILWAY_ENVIRONMENT || 'NOT SET'
 // Main email sending function
 export const sendEmail = async ({ to, subject, text, html }) => {
     try {
-        console.log('📤 Sending email via Gmail SMTP...');
-        console.log('📧 To:', to);
-        console.log('📧 Subject:', subject);
-        
         const startTime = Date.now();
         
-        const mailOptions = {
-            from: `Eventify <${process.env.GMAIL_USER}>`,
-            to: to,
-            subject: subject,
-            text: text,
-            html: html,
-        };
-        
-        const info = await transporter.sendMail(mailOptions);
-        
-        const endTime = Date.now();
-        
-        console.log('✅ Email sent successfully via Gmail SMTP');
-        console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
-        console.log('📧 Message ID:', info.messageId);
-        
-        return {
-            success: true,
-            messageId: info.messageId,
-            accepted: [to],
-            rejected: [],
-            response: 'Email sent via Gmail SMTP'
-        };
+        if (isRailway && gmail) {
+            // Use Gmail API for Railway/production
+            console.log('📤 Sending email via Gmail API (Railway)...');
+            console.log('📧 To:', to);
+            console.log('📧 Subject:', subject);
+            
+            // Create email message
+            const message = [
+                `From: Eventify <${process.env.GMAIL_USER}>`,
+                `To: ${to}`,
+                `Subject: ${subject}`,
+                'MIME-Version: 1.0',
+                'Content-Type: text/html; charset=utf-8',
+                '',
+                html || text
+            ].join('\n');
+            
+            // Encode message in base64
+            const encodedMessage = Buffer.from(message).toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=+$/, '');
+            
+            const result = await gmail.users.messages.send({
+                userId: 'me',
+                requestBody: {
+                    raw: encodedMessage
+                }
+            });
+            
+            const endTime = Date.now();
+            
+            console.log('✅ Email sent successfully via Gmail API');
+            console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
+            console.log('📧 Message ID:', result.data.id);
+            
+            return {
+                success: true,
+                messageId: result.data.id,
+                accepted: [to],
+                rejected: [],
+                response: 'Email sent via Gmail API (Railway)'
+            };
+            
+        } else {
+            // Use Gmail SMTP for local development
+            console.log('📤 Sending email via Gmail SMTP (Local)...');
+            console.log('📧 To:', to);
+            console.log('📧 Subject:', subject);
+            
+            const mailOptions = {
+                from: `Eventify <${process.env.GMAIL_USER}>`,
+                to: to,
+                subject: subject,
+                text: text,
+                html: html,
+            };
+            
+            const info = await transporter.sendMail(mailOptions);
+            
+            const endTime = Date.now();
+            
+            console.log('✅ Email sent successfully via Gmail SMTP');
+            console.log('⏱️ Email sent in:', endTime - startTime, 'ms');
+            console.log('📧 Message ID:', info.messageId);
+            
+            return {
+                success: true,
+                messageId: info.messageId,
+                accepted: [to],
+                rejected: [],
+                response: 'Email sent via Gmail SMTP (Local)'
+            };
+        }
         
     } catch (error) {
         console.error('❌ Error sending email:', error);
@@ -81,9 +155,12 @@ export const sendEmail = async ({ to, subject, text, html }) => {
         });
         
         // Railway-specific error handling
-        if (process.env.RAILWAY_ENVIRONMENT) {
-            console.error('🚂 Railway Environment Error - Check Gmail credentials');
-            console.error('🚂 Make sure GMAIL_USER and GMAIL_APP_PASSWORD are set in Railway dashboard');
+        if (isRailway) {
+            console.error('🚂 Railway Environment Error - Check Gmail API credentials');
+            console.error('🚂 Make sure GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GMAIL_APP_PASSWORD are set');
+        } else {
+            console.error('💻 Local Environment Error - Check Gmail SMTP credentials');
+            console.error('💻 Make sure GMAIL_USER and GMAIL_APP_PASSWORD are set');
         }
         
         throw error;
@@ -396,4 +473,8 @@ export const sendUnbanEmail = async (options) => {
     }
 };
 
-console.log('📧 Gmail SMTP email system initialized successfully');
+if (isRailway) {
+    console.log('📧 Gmail API email system initialized successfully for Railway');
+} else {
+    console.log('📧 Gmail SMTP email system initialized successfully for local development');
+}

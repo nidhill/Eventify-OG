@@ -18,12 +18,14 @@
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
+    "googleapis": "^159.0.0",
     "method-override": "^3.0.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.16.4",
     "nodemailer": "^7.0.6",
     "nodemon": "^3.1.10",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "resend": "^6.0.2"
   }
 }
