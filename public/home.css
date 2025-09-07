@@ -1165,3 +1165,64 @@ body.menu-open {
     font-size: 0.9rem;
   }
 }
+
+/* ======================================= */
+/* USER GREETING STYLES                   */
+/* ======================================= */
+.user-greeting {
+  transition: all 0.3s ease;
+  animation: slideInFromRight 0.5s ease-out;
+}
+
+.user-greeting:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive adjustments for user greeting */
+@media (max-width: 768px) {
+  .user-greeting {
+    top: 10px !important;
+    right: 10px !important;
+    padding: 8px 12px !important;
+  }
+  
+  .user-greeting div:first-child {
+    gap: 6px !important;
+  }
+  
+  .user-greeting div:first-child > div:first-child {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+  }
+  
+  .user-greeting p {
+    font-size: 12px !important;
+  }
+  
+  .user-greeting p:last-child {
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-greeting {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin: 10px auto !important;
+    width: fit-content !important;
+  }
+}
